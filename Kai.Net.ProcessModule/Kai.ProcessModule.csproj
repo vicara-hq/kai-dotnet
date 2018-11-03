@@ -7,9 +7,9 @@
     <ProjectGuid>{72187C7D-5DA0-4D0D-9049-0AB52B5BF993}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kai.Net.ProcessModule</RootNamespace>
-    <AssemblyName>Kai.Net.ProcessModule</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>Kai.ProcessModule</RootNamespace>
+    <AssemblyName>Kai.ProcessModule</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

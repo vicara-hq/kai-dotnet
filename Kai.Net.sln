@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kai.Net.ProcessModule", "Kai.Net.ProcessModule\Kai.Net.ProcessModule.csproj", "{72187C7D-5DA0-4D0D-9049-0AB52B5BF993}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kai.ProcessModule", "Kai.ProcessModule\Kai.ProcessModule.csproj", "{72187C7D-5DA0-4D0D-9049-0AB52B5BF993}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
