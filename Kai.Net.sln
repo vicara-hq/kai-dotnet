@@ -1,6 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Kai.BaseModule", "Kai.BaseModule\Kai.BaseModule.shproj", "{3D671133-41C0-4EE9-846B-C1FA085A5E56}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kai.ProcessModule", "Kai.ProcessModule\Kai.ProcessModule.csproj", "{72187C7D-5DA0-4D0D-9049-0AB52B5BF993}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kai.WebSocketModule", "Kai.WebSocketModule\Kai.WebSocketModule.csproj", "{F5AC2204-DD46-4D75-A3DA-7D80D81056AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +16,9 @@ Global
 		{72187C7D-5DA0-4D0D-9049-0AB52B5BF993}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72187C7D-5DA0-4D0D-9049-0AB52B5BF993}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72187C7D-5DA0-4D0D-9049-0AB52B5BF993}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5AC2204-DD46-4D75-A3DA-7D80D81056AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5AC2204-DD46-4D75-A3DA-7D80D81056AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5AC2204-DD46-4D75-A3DA-7D80D81056AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5AC2204-DD46-4D75-A3DA-7D80D81056AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

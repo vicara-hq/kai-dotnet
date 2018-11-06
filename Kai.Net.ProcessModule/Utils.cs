@@ -1,4 +1,0 @@
-﻿namespace Kai.Net.ProcessModule
-{
-    
-}
