@@ -141,7 +141,7 @@ namespace Kai.Module
 				return;
 			}
 
-			var type = input[Constants.Type].ToObject<string>();
+			var type = typeKey.ToObject<string>();
 			switch (type)
 			{
 				case Constants.Gesture:
@@ -159,7 +159,7 @@ namespace Kai.Module
 
 		private static void ParseSDKError(JObject input)
 		{
-			var errorCodeKey = input[Constants.Type];
+			var errorCodeKey = input[Constants.ErrorCode];
 			if (errorCodeKey == null || errorCodeKey.Type == JTokenType.Integer)
 			{
 				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
@@ -168,7 +168,7 @@ namespace Kai.Module
 
 			var errorCode = errorCodeKey.ToObject<int>();
 
-			var errorKey = input[Constants.Type];
+			var errorKey = input[Constants.Error];
 			if (errorKey == null || errorKey.Type == JTokenType.Integer)
 			{
 				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
@@ -177,7 +177,7 @@ namespace Kai.Module
 
 			var error = errorKey.ToObject<string>();
 
-			var messageKey = input[Constants.Type];
+			var messageKey = input[Constants.Message];
 			if (messageKey == null || messageKey.Type == JTokenType.Integer)
 			{
 				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
