@@ -22,6 +22,21 @@ namespace Kai.Module
 		public static UnknownGestureDataHandler UnknownGesture;
 
 		/// <summary>
+		/// Occurs when a finger shortcut is performed
+		/// </summary>
+		public static FingerShortcutDataHandler FingerShortcut;
+
+		/// <summary>
+		/// Occurs when PYR Data is recieved
+		/// </summary>
+		public static PYRDataHandler PYRData;
+
+		/// <summary>
+		/// Occurs when  Quaternion Data is recieved
+		/// </summary>
+		public static QuaternionDataHandler QuaternionData;
+
+		/// <summary>
 		/// Occurs when an unrecognised data is received by the module
 		/// </summary>
 		public static UnknownDataHandler UnknownData;
@@ -149,6 +164,21 @@ namespace Kai.Module
 					ParseGestureData(input);
 					break;
 				}
+				case Constants.FingerShortcut:
+				{
+					ParseFingerShortcutData(input);
+					break;
+				}
+				case Constants.PYRData:
+				{
+					ParsePYRData(input);
+					break;
+				}
+				case Constants.QuaternionData:
+				{
+					ParseQuaternionData(input);
+					break;
+				}
 				default:
 				{
 					UnknownData.Invoke(input);
@@ -204,6 +234,74 @@ namespace Kai.Module
 				Gesture?.Invoke(knownGesture);
 			else
 				UnknownGesture?.Invoke(gesture);
+		}
+
+		private static void ParseFingerShortcutData(JObject input)
+		{
+			bool[] array = new bool[4];
+			var jArray = input[Constants.Fingers]?.ToObject<JArray>();
+			for (int i = 0; i < jArray.Count; i++)
+			{
+				array[i] = jArray[i].ToObject<bool>();
+			}
+			FingerShortcut?.Invoke(array);
+		}
+
+		private static void ParseQuaternionData(JObject input)
+		{
+			var quaterionObject = input[Constants.Quaternion].ToObject<JObject>();
+
+			if (quaterionObject == null || quaterionObject.Type == JTokenType.String)
+			{
+				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
+				return;
+			}
+
+			Quaternion quaternion = new Quaternion
+			{
+				w = quaterionObject[Constants.W].ToObject<float>(),
+				x = quaterionObject[Constants.X].ToObject<float>(),
+				y = quaterionObject[Constants.Y].ToObject<float>(),
+				z = quaterionObject[Constants.Z].ToObject<float>()
+			};
+			QuaternionData?.Invoke(quaternion);
+		}
+
+		private static void ParsePYRData(JObject input)
+		{
+			var accelerometerObject = input[Constants.Accelerometer];
+			if (accelerometerObject == null || accelerometerObject.Type == JTokenType.String)
+			{
+				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
+				return;
+			}
+			var gyroscopeObject = input[Constants.Gyroscope];
+			if (gyroscopeObject == null || gyroscopeObject.Type == JTokenType.String)
+			{
+				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
+				return;
+			}
+
+			Vector3 accelerometer = new Vector3
+			{
+				x = accelerometerObject[Constants.X].ToObject<int>(),
+				y = accelerometerObject[Constants.Y].ToObject<int>(),
+				z = accelerometerObject[Constants.Z].ToObject<int>()
+			};
+
+			Vector3 gyroscope = new Vector3
+			{
+				x = gyroscopeObject[Constants.X].ToObject<int>(),
+				y = gyroscopeObject[Constants.Y].ToObject<int>(),
+				z = gyroscopeObject[Constants.Z].ToObject<int>()
+			};
+
+			Vector6 vector6 = new Vector6
+			{
+				Accelerometer = accelerometer,
+				Gyroscope = gyroscope
+			};
+			PYRData?.Invoke(vector6);
 		}
 	}
 }
