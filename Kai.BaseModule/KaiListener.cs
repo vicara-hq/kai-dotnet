@@ -286,12 +286,7 @@ namespace Kai.Module
 				z = gyroscopeObject[Constants.Z].ToObject<int>()
 			};
 
-			Vector6 vector6 = new Vector6
-			{
-				Accelerometer = accelerometer,
-				Gyroscope = gyroscope
-			};
-			PYRData?.Invoke(vector6);
+			PYRData?.Invoke(accelerometer,gyroscope);
 		}
 	}
 }

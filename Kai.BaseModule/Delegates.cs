@@ -8,7 +8,7 @@ namespace Kai.Module
 
 	public delegate void FingerShortcutDataHandler(bool[] array);
 
-	public delegate void PYRDataHandler(Vector6 vector6);
+	public delegate void PYRDataHandler(Vector3 accelerometer, Vector3 gyroscope);
 
 	public delegate void QuaternionDataHandler(Quaternion quaternion);
 
