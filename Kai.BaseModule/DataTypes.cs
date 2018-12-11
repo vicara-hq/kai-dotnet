@@ -43,9 +43,4 @@ namespace Kai.Module
 	{
 		public float w, x, y, z;
 	}
-
-	public struct Vector6
-	{
-		public Vector3 Accelerometer, Gyroscope;
-	}
 }
