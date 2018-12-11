@@ -82,33 +82,33 @@ namespace Kai.Module
 				[Constants.Type] = Constants.SetCapabilities
 			};
 
-			if ((capabilities & KaiCapabilities.GestureData) == KaiCapabilities.GestureData)
+			if (capabilities.HasFlag(KaiCapabilities.GestureData))
 				json.Add(Constants.GestureData, true);
 			
-			if ((capabilities & KaiCapabilities.LinearFlicks) == KaiCapabilities.LinearFlicks)
+			if (capabilities.HasFlag(KaiCapabilities.LinearFlicks))
 				json.Add(Constants.LinearFlick, true);
 			
-			if ((capabilities & KaiCapabilities.FingerShortcut) == KaiCapabilities.FingerShortcut)
+			if (capabilities.HasFlag(KaiCapabilities.FingerShortcut))
 				json.Add(Constants.FingerShortcutData, true);
 			
-			if ((capabilities & KaiCapabilities.FingerPosition) == KaiCapabilities.FingerPosition)
+			if (capabilities.HasFlag(KaiCapabilities.FingerPosition))
 				json.Add(Constants.FingerPositionalData, true);
 			
-			if ((capabilities & KaiCapabilities.PYRData) == KaiCapabilities.PYRData)
+			if (capabilities.HasFlag(KaiCapabilities.PYRData))
 				json.Add(Constants.PYRData, true);
 			
-			if ((capabilities & KaiCapabilities.QuaternionData) == KaiCapabilities.QuaternionData)
+			if (capabilities.HasFlag(KaiCapabilities.QuaternionData))
 				json.Add(Constants.QuaternionData, true);
 			
-			if ((capabilities & KaiCapabilities.RawData) == KaiCapabilities.RawData)
+			if (capabilities.HasFlag(KaiCapabilities.RawData))
 				json.Add(Constants.RawData, true);
 			
 			Send(json.ToString(Formatting.None));
 			Capabilities = capabilities;
 		}
 
-		partial static void SetupConnections();
-		partial static void Send(string data);
+		static partial void SetupConnections();
+		static partial void Send(string data);
 
 		private static Task SendAsync(string data)
 		{
@@ -160,30 +160,20 @@ namespace Kai.Module
 			switch (type)
 			{
 				case Constants.Gesture:
-				{
 					ParseGestureData(input);
 					break;
-				}
 				case Constants.FingerShortcut:
-				{
 					ParseFingerShortcutData(input);
 					break;
-				}
 				case Constants.PYRData:
-				{
 					ParsePYRData(input);
 					break;
-				}
 				case Constants.QuaternionData:
-				{
 					ParseQuaternionData(input);
 					break;
-				}
 				default:
-				{
 					UnknownData.Invoke(input);
 					break;
-				}
 			}
 		}
 
