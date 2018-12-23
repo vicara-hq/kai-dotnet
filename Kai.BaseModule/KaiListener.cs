@@ -240,16 +240,14 @@ namespace Kai.Module
 			}
 
 			var error = errorKey.ToObject<string>();
-			/*var messageKey = input[Constants.Message];
-			if (messageKey == null || messageKey.Type == JTokenType.Integer)
+			var messageKey = input[Constants.Message];
+			if (messageKey == null || messageKey.Type != JTokenType.String)
 			{
 				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
 				return;
 			}
 			
-			var message = messageKey.ToObject<string>();*/
-
-			var message = "error";
+			var message = messageKey.ToObject<string>();
 
 			Error?.Invoke(new ErrorEventArgs(errorCode, error, message));
 		}
