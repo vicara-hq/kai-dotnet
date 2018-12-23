@@ -3,14 +3,14 @@ using Newtonsoft.Json.Linq;
 
 namespace Kai.Module
 {
-	public delegate void GestureDataHandler(Gesture gesture);
+	public delegate void GestureDataHandler(Gesture gesture, string kaiId);
 	public delegate void UnknownGestureDataHandler(string gesture);
 
-	public delegate void FingerShortcutDataHandler(bool[] array);
+	public delegate void FingerShortcutDataHandler(bool[] array, string kaiId);
 
-	public delegate void PYRDataHandler(Vector3 accelerometer, Vector3 gyroscope);
+	public delegate void PYRDataHandler(Vector3 accelerometer, Vector3 gyroscope, string kaiId);
 
-	public delegate void QuaternionDataHandler(Quaternion quaternion);
+	public delegate void QuaternionDataHandler(Quaternion quaternion, string kaiId);
 
 	public delegate void KaiErrorHandler(ErrorEventArgs error);
 

@@ -25,5 +25,10 @@ namespace Kai.Module
 		public const string Quaternion = "quaternion";
 		public const string Accelerometer = "accelerometer";
 		public const string Gyroscope = "gyroscope";
+		public const string ModuleSecret = "moduleSecret";
+		public const string Data = "data";
+		public const string IncomingData = "incomingData";
+		public const string Auth = "auth";
+		public const string KaiId = "kaiId";
 	}
 }
