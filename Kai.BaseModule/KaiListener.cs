@@ -117,7 +117,7 @@ namespace Kai.Module
 			Capabilities = capabilities;
 		}
 
-		public static void SendAuth(string moduleSecret)
+		public static void SendAuth(string moduleId, string moduleSecret)
 		{
 			var json = new JObject
 			{
@@ -188,9 +188,9 @@ namespace Kai.Module
 						// TODO Log.Warning($"SDK data not formatted properly. Received: {data}");
 						return;
 					}
-					foreach(var instance in input["data"])
+					foreach(var instance in input[Constants.Data])
 					{
-						string type_ = instance["type"].ToObject<string>();
+						string type_ = instance[Constants.Type].ToObject<string>();
 						instance[Constants.KaiId] = kaiId;
 						switch (type_)
 						{
