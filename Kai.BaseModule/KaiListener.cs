@@ -182,16 +182,28 @@ namespace Kai.Module
 			switch (type)
 			{
 				case Constants.IncomingData:
+
 					var kaiId = input[Constants.KaiId];
 					if (kaiId == null || kaiId.Type != JTokenType.String)
 					{
 						// TODO Log.Warning($"SDK data not formatted properly. Received: {data}");
 						return;
 					}
-					foreach(var instance in input[Constants.Data])
+
+                    var foregroundProcess = input[Constants.ForegroundProcess];
+                    if (foregroundProcess == null || foregroundProcess.Type != JTokenType.String)
+                    {
+                        // TODO Log.Warning($"SDK data not formatted properly. Received: {data}");
+                        return;
+                    }
+
+
+                    foreach (var instance in input[Constants.Data])
 					{
 						string type_ = instance[Constants.Type].ToObject<string>();
 						instance[Constants.KaiId] = kaiId;
+                        instance[Constants.ForegroundProcess] = foregroundProcess;
+
 						switch (type_)
 						{
 							case Constants.Gesture:
@@ -201,7 +213,7 @@ namespace Kai.Module
 								ParseFingerShortcutData((JObject)instance);
 								break;
 							case Constants.PYRData:
-								ParsePYRData((JObject)input);
+								ParsePYRData((JObject)instance);
 								break;
 							case Constants.QuaternionData:
 								ParseQuaternionData((JObject)instance);
@@ -261,12 +273,17 @@ namespace Kai.Module
 				return;
 			}
 
-			var kaiId = input[Constants.KaiId].ToObject<string>();
+            var info = new AdditionalInfo
+            {
+                kaiId = input[Constants.KaiId].ToObject<string>(),
+                foregroundProcess = input[Constants.ForegroundProcess].ToObject<string>()
+            };
 
-			var gesture = gestureType.ToObject<string>();
+
+            var gesture = gestureType.ToObject<string>();
 
 			if (Enum.TryParse(gesture, true, out Gesture knownGesture))
-				Gesture?.Invoke(knownGesture, kaiId);
+				Gesture?.Invoke(knownGesture, info);
 			else
 				UnknownGesture?.Invoke(gesture);
 		}
@@ -279,8 +296,14 @@ namespace Kai.Module
 			{
 				array[i] = jArray[i].ToObject<bool>();
 			}
-			var kaiId = input[Constants.KaiId].ToObject<string>();
-			FingerShortcut?.Invoke(array, kaiId);
+
+            var info = new AdditionalInfo
+            {
+                kaiId = input[Constants.KaiId].ToObject<string>(),
+                foregroundProcess = input[Constants.ForegroundProcess].ToObject<string>()
+            };
+
+            FingerShortcut?.Invoke(array, info);
 		}
 
 		private static void ParseQuaternionData(JObject input)
@@ -301,8 +324,13 @@ namespace Kai.Module
 				z = quaterionObject[Constants.Z].ToObject<float>()
 			};
 
-			var kaiId = input[Constants.KaiId].ToObject<string>();
-			QuaternionData?.Invoke(quaternion,kaiId);
+            var info = new AdditionalInfo
+            {
+                kaiId = input[Constants.KaiId].ToObject<string>(),
+                foregroundProcess = input[Constants.ForegroundProcess].ToObject<string>()
+            };
+
+            QuaternionData?.Invoke(quaternion, info);
 		}
 
 		private static void ParsePYRData(JObject input)
@@ -334,8 +362,13 @@ namespace Kai.Module
 				z = gyroscopeObject[Constants.Z].ToObject<int>()
 			};
 
-			var kaiId = input[Constants.KaiId].ToObject<string>();
-			PYRData?.Invoke(accelerometer,gyroscope,kaiId);
+            var info = new AdditionalInfo
+            {
+                kaiId = input[Constants.KaiId].ToObject<string>(),
+                foregroundProcess = input[Constants.ForegroundProcess].ToObject<string>()
+            };
+
+            PYRData?.Invoke(accelerometer,gyroscope, info);
 		}
-	}
+    }
 }

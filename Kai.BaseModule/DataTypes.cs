@@ -43,4 +43,9 @@ namespace Kai.Module
 	{
 		public float w, x, y, z;
 	}
+
+    public struct AdditionalInfo
+    {
+        public string foregroundProcess, kaiId;
+    }
 }
