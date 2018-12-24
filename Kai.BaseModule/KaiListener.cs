@@ -2,46 +2,35 @@ using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using static Kai.Module.JObjectUtils;
 
 namespace Kai.Module
 {
 	public static partial class KaiListener
 	{
+		private static Kai[] connectedKais = new Kai[8];
 		private static bool initialised;
-		
-		private static bool authenticated  = false;
-
-		public static bool isAuthenticated()
-		{
-			return authenticated;
-		}
-		
-		public static KaiCapabilities Capabilities { get; private set; }
-		
-		/// <summary>
-		/// Occurs when a gesture is performed
-		/// </summary>
-		public static GestureDataHandler Gesture;
-		
-		/// <summary>
-		/// Occurs when an unknown gesture is performed
-		/// </summary>
-		public static UnknownGestureDataHandler UnknownGesture;
 
 		/// <summary>
-		/// Occurs when a finger shortcut is performed
+		/// Represents a boolean value whether the module is authenticated or not
 		/// </summary>
-		public static FingerShortcutDataHandler FingerShortcut;
-
+		public static bool Authenticated { get; private set; }
+		
 		/// <summary>
-		/// Occurs when PYR Data is recieved
+		/// Represents the <code>ProcessName</code> of the process that's in focus
 		/// </summary>
-		public static PYRDataHandler PYRData;
-
+		/// <see cref="System.Diagnostics.Process.ProcessName"/>
+		public static string ForegroundProcess { get; private set; }
+		
 		/// <summary>
-		/// Occurs when  Quaternion Data is recieved
+		/// Represents the module ID
 		/// </summary>
-		public static QuaternionDataHandler QuaternionData;
+		public static string ModuleID { get; private set; }
+		
+		/// <summary>
+		/// Represents the secret data of the Module
+		/// </summary>
+		public static string ModuleSecret { get; private set; }
 
 		/// <summary>
 		/// Occurs when an unrecognised data is received by the module
@@ -51,14 +40,28 @@ namespace Kai.Module
 		/// <summary>
 		/// Occurs when an error is reported by the SDK
 		/// </summary>
-		public static KaiErrorHandler Error;
+		public static EventHandler<ErrorEventArgs> Error;
+
+		/// <summary>
+		/// Contains the value of the default Kai that is connected to the SDK
+		/// </summary>
+		public static Kai DefaultKai { get; private set; }
+		
+		/// <summary>
+		/// Throws data when any Kai receives data
+		/// </summary>
+		public static Kai AnyKai { get; } = new Kai();
+		
+		// TODO LeftKai and RightKai
 
 		/// <summary>
 		/// Initialises the SDK. This function *has* to be called before receiving data from the Kai
 		/// </summary>
-		public static void Initialise()
+		public static void Initialise(string moduleId, string moduleSecret)
 		{
-			// TODO check compatibility with SDK
+			ModuleID = moduleId;
+			ModuleSecret = moduleSecret;
+			
 			initialised = true;
 		}
 
@@ -73,6 +76,9 @@ namespace Kai.Module
 
 			SetupConnections();
 			
+			SendAuth(ModuleID, ModuleSecret);
+			
+			// TODO check compatibility with SDK
 			// Test compatibility
 			// Send capabilities
 		}
@@ -81,10 +87,11 @@ namespace Kai.Module
 		/// Sets the Kai's capabilities and subscribes to that data
 		/// </summary>
 		/// <param name="capabilities">The capabilities to set the Kai to</param>
-		public static void SetCapabilities(KaiCapabilities capabilities)
+		/// <param name="kai">The kai to set the capabilities to</param>
+		public static void SetCapabilities(KaiCapabilities capabilities, Kai kai)
 		{
 			// TODO Make SetCapabilities call send / sendAsync based on parameter
-			if(!authenticated)
+			if(!Authenticated)
 				throw new ApplicationException("module not authenticated");
 
 			var json = new JObject
@@ -114,27 +121,27 @@ namespace Kai.Module
 				json.Add(Constants.RawData, true);
 			
 			Send(json.ToString(Formatting.None));
-			Capabilities = capabilities;
+			kai.Capabilities = capabilities;
 		}
-
-		public static void SendAuth(string moduleId, string moduleSecret)
-		{
-			var json = new JObject
-			{
-				[Constants.Type] = Constants.Auth,
-                [Constants.ModuleId] = moduleId,
-				[Constants.ModuleSecret] = moduleSecret
-			};
-
-			Send(json.ToString(Formatting.None));
-		}
-
+		
 		static partial void SetupConnections();
 		static partial void Send(string data);
 
 		private static Task SendAsync(string data)
 		{
 			return Task.Run(() => Send(data));
+		}
+		
+		private static void SendAuth(string moduleId, string moduleSecret)
+		{
+			var json = new JObject
+			{
+				[Constants.Type] = Constants.Authenticate,
+				[Constants.ModuleId] = moduleId,
+				[Constants.ModuleSecret] = moduleSecret
+			};
+
+			Send(json.ToString(Formatting.None));
 		}
 
 		private static void Handle(string data)
@@ -157,219 +164,179 @@ namespace Kai.Module
 				return;
 			}
 
-			var successKey = input[Constants.Success];
-			if (successKey == null || successKey.Type != JTokenType.Boolean)
-			{
-				// TODO Log.Warning($"SDK data not formatted properly. Received: {data}");
-				return;
-			}
-
-			var success = successKey.ToObject<bool>();
+			var success = input.GetObjectAs<bool>(Constants.Success);
 			if (!success)
 			{
 				ParseSDKError(input);
 				return;
 			}
 
-			var typeKey = input[Constants.Type];
-			if (typeKey == null || typeKey.Type != JTokenType.String)
-			{
-				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
-				return;
-			}
-
-			var type = typeKey.ToObject<string>();
+			var type = input.GetObjectAs<string>(Constants.Type);
 
 			switch (type)
 			{
 				case Constants.IncomingData:
-
-					var kaiId = input[Constants.KaiId];
-					if (kaiId == null || kaiId.Type != JTokenType.String)
-					{
-						// TODO Log.Warning($"SDK data not formatted properly. Received: {data}");
-						return;
-					}
-
-                    var foregroundProcess = input[Constants.ForegroundProcess];
-                    if (foregroundProcess == null || foregroundProcess.Type != JTokenType.String)
-                    {
-                        // TODO Log.Warning($"SDK data not formatted properly. Received: {data}");
-                        return;
-                    }
-
-
-                    foreach (var instance in input[Constants.Data])
-					{
-						string type_ = instance[Constants.Type].ToObject<string>();
-						instance[Constants.KaiId] = kaiId;
-                        instance[Constants.ForegroundProcess] = foregroundProcess;
-
-						switch (type_)
-						{
-							case Constants.Gesture:
-								ParseGestureData((JObject)instance);
-								break;
-							case Constants.FingerShortcut:
-								ParseFingerShortcutData((JObject)instance);
-								break;
-							case Constants.PYRData:
-								ParsePYRData((JObject)instance);
-								break;
-							case Constants.QuaternionData:
-								ParseQuaternionData((JObject)instance);
-								break;
-							default:
-								UnknownData.Invoke(input);
-								break;
-						}
-					}
+					ParseIncomingData(input);
 					break;
-				case Constants.Auth:
-					authenticated = true;
+				case Constants.Authenticate:
+					ParseAuthentication(input);
+					break;
+				case Constants.ConnectedKais:
+					ParseConnectedKais(input);
 					break;
 				default:
-					UnknownData.Invoke(input);
+					UnknownData?.Invoke(input);
 					break;
 			}
 		}
-
+		
 		private static void ParseSDKError(JObject input)
 		{
-			var errorCodeKey = input[Constants.ErrorCode];
-			if (errorCodeKey == null || errorCodeKey.Type != JTokenType.Integer)
+			var errorCode = input.GetObjectAs<int>(Constants.ErrorCode);
+			var error = input.GetObjectAs<string>(Constants.Error);
+			var message = input.GetObjectAs<string>(Constants.Message);
+
+			Error?.Invoke(null, new ErrorEventArgs(errorCode, error, message));
+		}
+
+		private static void ParseIncomingData(JObject input)
+		{
+			ForegroundProcess = input.GetObjectAs<string>(Constants.ForegroundProcess);
+			var kaiId = input.GetObjectAs<int>(Constants.KaiId);
+			var kai = connectedKais[kaiId];
+
+			var dataList = input.GetObjectAs<JArray>(Constants.Data);
+
+			if (dataList == null)
 			{
-				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
+				// TODO Log.Warning($"SDK data not formatted properly. Received: {data}");
 				return;
 			}
 
-			var errorCode = errorCodeKey.ToObject<int>();
-
-			var errorKey = input[Constants.Error];
-			if (errorKey == null || errorKey.Type != JTokenType.String)
+			foreach (var data in dataList)
 			{
-				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
-				return;
-			}
+				if (data.Type != JTokenType.Object)
+				{
+					// TODO Log.Warning($"SDK data not formatted properly. Received: {data}");
+					continue;
+				}
 
-			var error = errorKey.ToObject<string>();
-			var messageKey = input[Constants.Message];
-			if (messageKey == null || messageKey.Type != JTokenType.String)
-			{
-				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
-				return;
+				var dataObject = data.ToObject<JObject>();
+				var type = dataObject.GetObjectAs<string>(Constants.Type);
+
+				switch (type)
+				{
+					case Constants.Gesture:
+						ParseGestureData(dataObject.GetObjectAs<JObject>(Constants.Data));
+						break;
+					case Constants.FingerShortcut:
+						ParseFingerShortcutData(dataObject.GetObjectAs<JArray>(Constants.Data));
+						break;
+					case Constants.PYRData:
+						ParsePYRData(dataObject.GetObjectAs<JObject>(Constants.Data));
+						break;
+					case Constants.QuaternionData:
+						ParseQuaternionData(dataObject.GetObjectAs<JObject>(Constants.Data));
+						break;
+					default:
+						UnknownData.Invoke(input);
+						break;
+				}
 			}
 			
-			var message = messageKey.ToObject<string>();
+			void ParseGestureData(JObject data)
+			{
+				var gesture = data.GetObjectAs<string>(Constants.Gesture);
 
-			Error?.Invoke(new ErrorEventArgs(errorCode, error, message));
+				if (Enum.TryParse(gesture, true, out Gesture knownGesture))
+				{
+					kai.Gesture?.Invoke(kai, new GestureEventArgs(knownGesture));
+					AnyKai.Gesture?.Invoke(kai, new GestureEventArgs(knownGesture));
+				}
+				else
+				{
+					kai.UnknownGesture?.Invoke(kai, new UnknownGestureEventArgs(gesture));
+					AnyKai.UnknownGesture?.Invoke(kai, new UnknownGestureEventArgs(gesture));
+				}
+			}
+	
+			void ParseFingerShortcutData(JArray data)
+			{
+				var array = new bool[4];
+				for (var i = 0; i < data.Count; i++)
+				{
+					array[i] = data[i].ToObject<bool>();
+				}
+	
+				kai.FingerShortcut?.Invoke(kai, new FingerShortcutEventArgs(array));
+				AnyKai.FingerShortcut?.Invoke(kai, new FingerShortcutEventArgs(array));
+			}
+	
+			void ParseQuaternionData(JObject json)
+			{
+				var quaternion = new Quaternion
+				{
+					w = json.GetObjectAs<float>(Constants.W),
+					x = json.GetObjectAs<float>(Constants.X),
+					y = json.GetObjectAs<float>(Constants.Y),
+					z = json.GetObjectAs<float>(Constants.Z)
+				};
+				
+				kai.QuaternionData?.Invoke(kai, new QuaternionEventArgs(quaternion));
+				AnyKai.QuaternionData?.Invoke(kai, new QuaternionEventArgs(quaternion));
+			}
+	
+			void ParsePYRData(JObject json)
+			{
+				var accelerometerObject = json.GetObjectAs<JObject>(Constants.Accelerometer);
+				var gyroscopeObject = json.GetObjectAs<JObject>(Constants.Gyroscope);
+				
+				var accelerometer = new Vector3
+				{
+					x = accelerometerObject[Constants.X].ToObject<int>(),
+					y = accelerometerObject[Constants.Y].ToObject<int>(),
+					z = accelerometerObject[Constants.Z].ToObject<int>()
+				};
+	
+				var gyroscope = new Vector3
+				{
+					x = gyroscopeObject[Constants.X].ToObject<int>(),
+					y = gyroscopeObject[Constants.Y].ToObject<int>(),
+					z = gyroscopeObject[Constants.Z].ToObject<int>()
+				};
+	
+				kai.PYRData?.Invoke(kai, new PYREventArgs(accelerometer, gyroscope));
+				AnyKai.PYRData?.Invoke(kai, new PYREventArgs(accelerometer, gyroscope));
+			}
 		}
 
-		private static void ParseGestureData(JObject input)
+		private static void ParseAuthentication(JObject input)
 		{
-			var gestureType = input[Constants.Data];
-			if (gestureType == null || gestureType.Type != JTokenType.String)
-			{
-				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
-				return;
-			}
-
-            var info = new AdditionalInfo
-            {
-                kaiId = input[Constants.KaiId].ToObject<string>(),
-                foregroundProcess = input[Constants.ForegroundProcess].ToObject<string>()
-            };
-
-
-            var gesture = gestureType.ToObject<string>();
-
-			if (Enum.TryParse(gesture, true, out Gesture knownGesture))
-				Gesture?.Invoke(knownGesture, info);
-			else
-				UnknownGesture?.Invoke(gesture);
+			Authenticated = input.GetObjectAs<bool>(Constants.Authenticated);
 		}
 
-		private static void ParseFingerShortcutData(JObject input)
+		private static void ParseConnectedKais(JObject input)
 		{
-			bool[] array = new bool[4];
-			var jArray = input[Constants.Fingers]?.ToObject<JArray>();
-			for (int i = 0; i < jArray.Count; i++)
+			var kaiList = input.GetObjectAs<JArray>(Constants.Kais);
+			connectedKais = new Kai[8];
+			foreach (var token in kaiList)
 			{
-				array[i] = jArray[i].ToObject<bool>();
+				var kai = token.ToObject<JObject>();
+				var kaiID = kai.GetObjectAs<int>(Constants.KaiId);
+				var hand = kai.GetObjectAs<string>(Constants.Hand);
+				var def = kai.GetObjectAs<bool>(Constants.Default);
+
+				if (!Enum.TryParse(hand, true, out Hand handEnum))
+					handEnum = Hand.Left;
+				
+				connectedKais[kaiID] = new Kai
+				{
+					Hand = handEnum
+				};
+
+				if (def)
+					DefaultKai = connectedKais[kaiID];
 			}
-
-            var info = new AdditionalInfo
-            {
-                kaiId = input[Constants.KaiId].ToObject<string>(),
-                foregroundProcess = input[Constants.ForegroundProcess].ToObject<string>()
-            };
-
-            FingerShortcut?.Invoke(array, info);
 		}
-
-		private static void ParseQuaternionData(JObject input)
-		{
-			var quaterionObject = input[Constants.Quaternion].ToObject<JObject>();
-
-			if (quaterionObject == null || quaterionObject.Type == JTokenType.String)
-			{
-				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
-				return;
-			}
-
-			Quaternion quaternion = new Quaternion
-			{
-				w = quaterionObject[Constants.W].ToObject<float>(),
-				x = quaterionObject[Constants.X].ToObject<float>(),
-				y = quaterionObject[Constants.Y].ToObject<float>(),
-				z = quaterionObject[Constants.Z].ToObject<float>()
-			};
-
-            var info = new AdditionalInfo
-            {
-                kaiId = input[Constants.KaiId].ToObject<string>(),
-                foregroundProcess = input[Constants.ForegroundProcess].ToObject<string>()
-            };
-
-            QuaternionData?.Invoke(quaternion, info);
-		}
-
-		private static void ParsePYRData(JObject input)
-		{
-			var accelerometerObject = input[Constants.Accelerometer];
-			if (accelerometerObject == null || accelerometerObject.Type == JTokenType.String)
-			{
-				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
-				return;
-			}
-			var gyroscopeObject = input[Constants.Gyroscope];
-			if (gyroscopeObject == null || gyroscopeObject.Type == JTokenType.String)
-			{
-				// TODO Log.Error($"SDK data not formatted properly. Received: {data}");
-				return;
-			}
-
-			Vector3 accelerometer = new Vector3
-			{
-				x = accelerometerObject[Constants.X].ToObject<int>(),
-				y = accelerometerObject[Constants.Y].ToObject<int>(),
-				z = accelerometerObject[Constants.Z].ToObject<int>()
-			};
-
-			Vector3 gyroscope = new Vector3
-			{
-				x = gyroscopeObject[Constants.X].ToObject<int>(),
-				y = gyroscopeObject[Constants.Y].ToObject<int>(),
-				z = gyroscopeObject[Constants.Z].ToObject<int>()
-			};
-
-            var info = new AdditionalInfo
-            {
-                kaiId = input[Constants.KaiId].ToObject<string>(),
-                foregroundProcess = input[Constants.ForegroundProcess].ToObject<string>()
-            };
-
-            PYRData?.Invoke(accelerometer,gyroscope, info);
-		}
-    }
+	}
 }
