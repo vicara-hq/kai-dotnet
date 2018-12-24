@@ -31,5 +31,7 @@ namespace Kai.Module
 		public const string Auth = "auth";
 		public const string KaiId = "kaiId";
         public const string ForegroundProcess = "foregroundProcess";
+        public const string ModuleId = "moduleId";
+        public const string CapabilitiesPermission = "capabilitiesPermission";
 	}
 }

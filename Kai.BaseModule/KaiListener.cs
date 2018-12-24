@@ -122,6 +122,7 @@ namespace Kai.Module
 			var json = new JObject
 			{
 				[Constants.Type] = Constants.Auth,
+                [Constants.ModuleId] = moduleId,
 				[Constants.ModuleSecret] = moduleSecret
 			};
 
