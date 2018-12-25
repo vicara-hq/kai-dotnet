@@ -9,7 +9,7 @@ namespace Kai.Module
 	{
 		private static WebSocket webSocket;
 		
-		partial static void SetupConnections()
+		static partial void SetupConnections()
 		{
 			webSocket = new WebSocket("ws://localhost:2203");
 			webSocket.OnMessage += OnWebSocketMessage;
@@ -27,7 +27,7 @@ namespace Kai.Module
 			}
 		}
 
-		partial static void Send(string data)
+		static partial void Send(string data)
 		{
 			webSocket?.Send(data);
 		}

@@ -12,7 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Delegates.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)KaiDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Kai.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KaiListener.cs" />
   </ItemGroup>
 </Project>
