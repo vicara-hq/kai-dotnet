@@ -1,0 +1,15 @@
+language: csharp
+solution: Kai.Net.sln
+
+install:
+    - nuget restore Kai.Net.sln
+
+script:
+    - nuget pack -IncludeReferencedProjects -properties Configuration=Release Kai.WebSocketModule/Kai.WebSocketModule.csproj -Build
+    - nuget pack -IncludeReferencedProjects -properties Configuration=Release Kai.ProcessModule/Kai.ProcessModule.csproj -Build
+    - nuget push Kai.WebSocketModule*.nupkg -ApiKey $API_KEY -Source $SOURCE_URL
+    - nuget push Kai.ProcessModule*.nupkg -ApiKey $API_KEY -Source $SOURCE_URL
+
+branches:
+    only:
+        - master

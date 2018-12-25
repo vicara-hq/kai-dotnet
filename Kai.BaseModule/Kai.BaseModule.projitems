@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>E0C0D745-80DE-42A2-AD3A-1BABFBB0F7AB</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Kai.BaseModule</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Delegates.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Kai.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KaiListener.cs" />
+  </ItemGroup>
+</Project>
