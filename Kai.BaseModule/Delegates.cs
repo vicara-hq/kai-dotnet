@@ -85,8 +85,11 @@ namespace Kai.Module
 
 		public static T GetObjectAs<T>(this JObject jObject, string key, out bool success, T defaultValue = default, JTokenType unknownType = default)
 		{
-			if (jObject == null)
-				return defaultValue;
+            if (jObject == null)
+            {
+                success = false;
+                return defaultValue;
+            }
 			
 			success = true;
 			
