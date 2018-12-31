@@ -80,10 +80,10 @@ namespace Kai.Module
 	{
 		public static T GetObjectAs<T>(this JObject jObject, string key, T defaultValue = default, JTokenType unknownType = default)
 		{
-			return jObject.GetObjectAs<T>(key, out var _, defaultValue, unknownType);
+			return jObject.GetObjectAs(key, out _, defaultValue);
 		}
 
-		public static T GetObjectAs<T>(this JObject jObject, string key, out bool success, T defaultValue = default, JTokenType unknownType = default)
+		public static T GetObjectAs<T>(this JObject jObject, string key, out bool success, T defaultValue = default)
 		{
             if (jObject == null)
             {
@@ -96,26 +96,26 @@ namespace Kai.Module
 			switch (defaultValue)
 			{
 				case bool _ when jObject[key]?.Type == JTokenType.Boolean:
-					return (T) jObject[key].ToObject(typeof(bool));
+					return jObject[key].ToObject<T>();
 				
 				case int _ when jObject[key]?.Type == JTokenType.Integer:
-					return (T) jObject[key].ToObject(typeof(int));
+					return jObject[key].ToObject<T>();
 				
 				case float _ when jObject[key]?.Type == JTokenType.Float:
-					return (T) jObject[key].ToObject(typeof(float));
+					return jObject[key].ToObject<T>();
 				
 				case string _ when jObject[key]?.Type == JTokenType.String:
-					return (T) jObject[key].ToObject(typeof(string));
+					return jObject[key].ToObject<T>();
 				
 				case JArray _ when jObject[key]?.Type == JTokenType.Array:
-					return (T) jObject[key].ToObject(typeof(JArray));
+					return jObject[key].ToObject<T>();
 				
 				case JObject _ when jObject[key]?.Type == JTokenType.Object:
-					return (T) jObject[key].ToObject(typeof(JObject));
+					return jObject[key].ToObject<T>();
 				
 				default:
 					success = false;
-					return jObject.ToObject<T>();
+					return defaultValue;
 			}
 		}
 	}
