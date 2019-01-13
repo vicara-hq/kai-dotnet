@@ -50,5 +50,20 @@ namespace Kai.Module
 	{
 		public float w, x, y, z;
 	}
+
+	public struct Accelerometer
+	{
+		public float x, y, z;
+	}
+
+	public struct Gyroscope
+	{
+		public float x, y, z;
+	}
+	
+	public struct Magnetometer
+	{
+		public float x, y, z;
+	}
 	// ReSharper restore InconsistentNaming
 }

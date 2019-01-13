@@ -40,6 +40,12 @@ namespace Kai.Module
 		public const string Yaw = "yaw";
 		public const string Pitch = "pitch";
 		public const string Roll = "Roll";
-		
+		public const string LinearFlickData = "linearFlickData";
+		public const string Flick = "flick";
+		public const string AccelerometerData = "accelerometerData";
+		public const string GyroscopeData = "gyroscopeData";
+		public const string MagnetometerData = "magnetometerData";
+		public const string Magnetometer = "magnetometer";
+
 	}
 }

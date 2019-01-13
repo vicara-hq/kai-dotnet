@@ -12,6 +12,59 @@ namespace Kai.Module
 			Gesture = gesture;
 		}
 	}
+
+	public class LinearFlickEventArgs : EventArgs
+	{
+		public string Flick { get; set; }
+
+		public LinearFlickEventArgs(string flick)
+		{
+			Flick = flick;
+		}
+	}
+
+	public class FingerPositionalEventArgs : EventArgs
+	{
+		public float[] Fingers { get; }
+
+		public FingerPositionalEventArgs(float[] fingers)
+		{
+			Fingers = fingers;
+		}
+		
+	}
+
+	public class AccelerometerEventArgs : EventArgs
+	{
+		public Accelerometer Accelerometer { get; }
+
+		public AccelerometerEventArgs(Accelerometer accelerometer)
+		{
+			Accelerometer = accelerometer;
+		}
+	}
+
+	public class GyroscopeEventAgrs : EventArgs
+	{
+		public  Gyroscope Gyroscope { get; }
+
+		public GyroscopeEventAgrs(Gyroscope gyroscope)
+		{
+			Gyroscope = gyroscope;
+		}
+		
+	}
+	
+	public class MagnetometerEventAgrs : EventArgs
+	{
+		public  Magnetometer Magnetometer { get; }
+
+		public MagnetometerEventAgrs(Magnetometer magnetometer)
+		{
+			Magnetometer = magnetometer;
+		}
+		
+	}
 	
 	public class UnknownGestureEventArgs : EventArgs
 	{
