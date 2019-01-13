@@ -136,7 +136,7 @@ namespace Kai.Module
 		{
 			var json = new JObject
 			{
-				[Constants.Type] = Constants.Authenticate,
+				[Constants.Type] = Constants.Authentication,
 				[Constants.ModuleId] = moduleId,
 				[Constants.ModuleSecret] = moduleSecret
 			};
@@ -178,7 +178,7 @@ namespace Kai.Module
 				case Constants.IncomingData:
 					ParseIncomingData(input);
 					break;
-				case Constants.Authenticate:
+				case Constants.Authentication:
 					ParseAuthentication(input);
 					break;
 				case Constants.ConnectedKais:
@@ -226,17 +226,17 @@ namespace Kai.Module
 
 				switch (type)
 				{
-					case Constants.Gesture:
-						ParseGestureData(dataObject.GetObjectAs<JObject>(Constants.Data));
+					case Constants.GestureData:
+						ParseGestureData(dataObject.GetObjectAs<JObject>(Constants.Gesture));
 						break;
-					case Constants.FingerShortcut:
-						ParseFingerShortcutData(dataObject.GetObjectAs<JArray>(Constants.Data));
+					case Constants.FingerShortcutData:
+						ParseFingerShortcutData(dataObject.GetObjectAs<JArray>(Constants.Fingers));
 						break;
 					case Constants.PYRData:
-						ParsePYRData(dataObject.GetObjectAs<JObject>(Constants.Data));
+						ParsePYRData(dataObject);
 						break;
 					case Constants.QuaternionData:
-						ParseQuaternionData(dataObject.GetObjectAs<JObject>(Constants.Data));
+						ParseQuaternionData(dataObject.GetObjectAs<JObject>(Constants.Quaternion));
 						break;
 					default:
 						UnknownData.Invoke(input);
@@ -288,25 +288,12 @@ namespace Kai.Module
 	
 			void ParsePYRData(JObject json)
 			{
-				var accelerometerObject = json.GetObjectAs<JObject>(Constants.Accelerometer);
-				var gyroscopeObject = json.GetObjectAs<JObject>(Constants.Gyroscope);
+				var yaw = json.GetObjectAs<float>(Constants.Yaw);
+				var pitch = json.GetObjectAs<float>(Constants.Pitch);
+				var roll = json.GetObjectAs<float>(Constants.Roll);
 				
-				var accelerometer = new Vector3
-				{
-					x = accelerometerObject[Constants.X].ToObject<int>(),
-					y = accelerometerObject[Constants.Y].ToObject<int>(),
-					z = accelerometerObject[Constants.Z].ToObject<int>()
-				};
-	
-				var gyroscope = new Vector3
-				{
-					x = gyroscopeObject[Constants.X].ToObject<int>(),
-					y = gyroscopeObject[Constants.Y].ToObject<int>(),
-					z = gyroscopeObject[Constants.Z].ToObject<int>()
-				};
-	
-				kai.PYRData?.Invoke(kai, new PYREventArgs(accelerometer, gyroscope));
-				AnyKai.PYRData?.Invoke(kai, new PYREventArgs(accelerometer, gyroscope));
+				kai.PYRData?.Invoke(kai, new PYREventArgs(yaw,pitch,roll));
+				AnyKai.PYRData?.Invoke(kai, new PYREventArgs(yaw,pitch,roll));
 			}
 		}
 

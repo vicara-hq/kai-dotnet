@@ -40,13 +40,17 @@ namespace Kai.Module
 
 	public class PYREventArgs : EventArgs
 	{
-		public Vector3 Accelerometer { get; }
-		public Vector3 Gyroscope { get; }
+		public float Yaw { get; set; }
+		
+		public float Pitch { get; set; }
+		
+		public float Roll { get; set; }
 
-		public PYREventArgs(Vector3 accelerometer, Vector3 gyroscope)
+		public PYREventArgs(float yaw,float pitch, float roll)
 		{
-			Accelerometer = accelerometer;
-			Gyroscope = gyroscope;
+			Yaw = yaw;
+			Pitch = pitch;
+			Roll = roll;
 		}
 	}
 

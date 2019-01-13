@@ -13,6 +13,7 @@ namespace Kai.Module
 		public const string LinearFlick = "linearFlick";
 		public const string FingerShortcutData = "fingerShortcutData";
 		public const string FingerShortcut = "fingerShortcut";
+		public const string Fingers = "fingers";
 		public const string FingerPositionalData = "fingerPositionalData";
 		public const string PYRData = "pyrData";
 		public const string QuaternionData = "quaternionData";
@@ -27,7 +28,7 @@ namespace Kai.Module
 		public const string ModuleSecret = "moduleSecret";
 		public const string Data = "data";
 		public const string IncomingData = "incomingData";
-		public const string Authenticate = "authenticate";
+		public const string Authentication = "authentication";
 		public const string Authenticated = "authenticated";
 		public const string KaiId = "kaiId";
 		public const string ForegroundProcess = "foregroundProcess";
@@ -36,5 +37,9 @@ namespace Kai.Module
 		public const string Kais = "kais";
 		public const string Hand = "hand";
 		public const string Default = "default";
+		public const string Yaw = "yaw";
+		public const string Pitch = "pitch";
+		public const string Roll = "Roll";
+		
 	}
 }
