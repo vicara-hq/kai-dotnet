@@ -45,6 +45,31 @@ namespace Kai.Module
 		/// Occurs when  Quaternion Data is received
 		/// </summary>
 		public EventHandler<QuaternionEventArgs> QuaternionData;
+		
+		/// <summary>
+		/// Occurs when  LinearFlick Data is received
+		/// </summary>
+		public EventHandler<LinearFlickEventArgs> LinearFlickData;
+		
+		/// <summary>
+		/// Occurs when  Finger Positional Data is received
+		/// </summary>
+		public EventHandler<FingerPositionalEventArgs> FingerPositionalData;
+		
+		/// <summary>
+		/// Occurs when  Accelerometer Data is received
+		/// </summary>
+		public EventHandler<AccelerometerEventArgs> AccelerometerData;
+		
+		/// <summary>
+		/// Occurs when  Gyroscope Data is received
+		/// </summary>
+		public EventHandler<GyroscopeEventAgrs> GyroscopeData;
+		
+		/// <summary>
+		/// Occurs when  Magnetometer Data is received
+		/// </summary>
+		public EventHandler<MagnetometerEventAgrs> MagnetometerData;
 
 		/// <summary>
 		/// Sets the Kai's capabilities and subscribes to that data

@@ -136,7 +136,7 @@ namespace Kai.Module
 		{
 			var json = new JObject
 			{
-				[Constants.Type] = Constants.Authenticate,
+				[Constants.Type] = Constants.Authentication,
 				[Constants.ModuleId] = moduleId,
 				[Constants.ModuleSecret] = moduleSecret
 			};
@@ -178,7 +178,7 @@ namespace Kai.Module
 				case Constants.IncomingData:
 					ParseIncomingData(input);
 					break;
-				case Constants.Authenticate:
+				case Constants.Authentication:
 					ParseAuthentication(input);
 					break;
 				case Constants.ConnectedKais:
@@ -226,17 +226,32 @@ namespace Kai.Module
 
 				switch (type)
 				{
-					case Constants.Gesture:
-						ParseGestureData(dataObject.GetObjectAs<JObject>(Constants.Data));
+					case Constants.GestureData:
+						ParseGestureData(dataObject);
 						break;
-					case Constants.FingerShortcut:
-						ParseFingerShortcutData(dataObject.GetObjectAs<JArray>(Constants.Data));
+					case Constants.FingerShortcutData:
+						ParseFingerShortcutData(dataObject);
 						break;
 					case Constants.PYRData:
-						ParsePYRData(dataObject.GetObjectAs<JObject>(Constants.Data));
+						ParsePYRData(dataObject);
 						break;
 					case Constants.QuaternionData:
-						ParseQuaternionData(dataObject.GetObjectAs<JObject>(Constants.Data));
+						ParseQuaternionData(dataObject);
+						break;
+					case Constants.LinearFlickData:
+						ParseLinearFlickData(dataObject);
+						break;
+					case Constants.FingerPositionalData:
+						ParseFingerPositionalData(dataObject);
+						break;
+					case Constants.AccelerometerData:
+						ParseAccelerometerData(dataObject);
+						break;
+					case Constants.GyroscopeData:
+						ParseGyroscopeData(dataObject);
+						break;
+					case Constants.MagnetometerData:
+						ParseMagnetometerData(dataObject);
 						break;
 					default:
 						UnknownData.Invoke(input);
@@ -260,20 +275,24 @@ namespace Kai.Module
 				}
 			}
 	
-			void ParseFingerShortcutData(JArray data)
+			void ParseFingerShortcutData(JObject data)
 			{
+				var dataArray = data.GetObjectAs<JArray>(Constants.Fingers);
 				var array = new bool[4];
-				for (var i = 0; i < data.Count; i++)
+				
+				for (var i = 0; i < dataArray.Count; i++)
 				{
-					array[i] = data[i].ToObject<bool>();
+					array[i] = dataArray[i].ToObject<bool>();
 				}
 	
 				kai.FingerShortcut?.Invoke(kai, new FingerShortcutEventArgs(array));
 				AnyKai.FingerShortcut?.Invoke(kai, new FingerShortcutEventArgs(array));
 			}
 	
-			void ParseQuaternionData(JObject json)
+			void ParseQuaternionData(JObject data)
 			{
+				var json = data.GetObjectAs<JObject>(Constants.Quaternion);
+				
 				var quaternion = new Quaternion
 				{
 					w = json.GetObjectAs<float>(Constants.W),
@@ -288,25 +307,78 @@ namespace Kai.Module
 	
 			void ParsePYRData(JObject json)
 			{
-				var accelerometerObject = json.GetObjectAs<JObject>(Constants.Accelerometer);
-				var gyroscopeObject = json.GetObjectAs<JObject>(Constants.Gyroscope);
+				var yaw = json.GetObjectAs<float>(Constants.Yaw);
+				var pitch = json.GetObjectAs<float>(Constants.Pitch);
+				var roll = json.GetObjectAs<float>(Constants.Roll);
 				
-				var accelerometer = new Vector3
+				kai.PYRData?.Invoke(kai, new PYREventArgs(yaw,pitch,roll));
+				AnyKai.PYRData?.Invoke(kai, new PYREventArgs(yaw,pitch,roll));
+			}
+			
+			void ParseLinearFlickData(JObject data)
+			{
+				var flick = data.GetObjectAs<string>(key: Constants.Flick);
+				kai.LinearFlickData?.Invoke(kai,new LinearFlickEventArgs(flick));
+				AnyKai.LinearFlickData?.Invoke(kai,new LinearFlickEventArgs(flick));
+			}
+
+			void ParseFingerPositionalData(JObject data)
+			{
+				var json = data.GetObjectAs<JArray>(Constants.Fingers);
+				var array = new float[4];
+				
+				for (var i = 0; i < json.Count; i++)
 				{
-					x = accelerometerObject[Constants.X].ToObject<int>(),
-					y = accelerometerObject[Constants.Y].ToObject<int>(),
-					z = accelerometerObject[Constants.Z].ToObject<int>()
-				};
-	
-				var gyroscope = new Vector3
+					array[i] = json[i].ToObject<float>();
+				}
+				
+				kai.FingerPositionalData?.Invoke(kai,new FingerPositionalEventArgs(array));
+				AnyKai.FingerPositionalData?.Invoke(kai,new FingerPositionalEventArgs(array));
+			}
+
+			void ParseAccelerometerData(JObject data)
+			{
+				var json = data.GetObjectAs<JObject>(Constants.Accelerometer);
+				
+				var accelerometer = new Accelerometer
 				{
-					x = gyroscopeObject[Constants.X].ToObject<int>(),
-					y = gyroscopeObject[Constants.Y].ToObject<int>(),
-					z = gyroscopeObject[Constants.Z].ToObject<int>()
+					x = json.GetObjectAs<float>(Constants.X),
+					y = json.GetObjectAs<float>(Constants.Z),
+					z = json.GetObjectAs<float>(Constants.Z),
 				};
-	
-				kai.PYRData?.Invoke(kai, new PYREventArgs(accelerometer, gyroscope));
-				AnyKai.PYRData?.Invoke(kai, new PYREventArgs(accelerometer, gyroscope));
+				
+				kai.AccelerometerData?.Invoke(kai,new AccelerometerEventArgs(accelerometer));
+				AnyKai.AccelerometerData?.Invoke(kai,new AccelerometerEventArgs(accelerometer));
+			}
+			
+			void ParseGyroscopeData(JObject data)
+			{
+				var json = data.GetObjectAs<JObject>(Constants.Gyroscope);
+				
+				var gyroscope = new Gyroscope
+				{
+					x = json.GetObjectAs<float>(Constants.X),
+					y = json.GetObjectAs<float>(Constants.Z),
+					z = json.GetObjectAs<float>(Constants.Z),
+				};
+				
+				kai.GyroscopeData?.Invoke(kai,new GyroscopeEventAgrs(gyroscope));
+				AnyKai.GyroscopeData?.Invoke(kai,new GyroscopeEventAgrs(gyroscope));
+			}
+			
+			void ParseMagnetometerData(JObject data)
+			{
+				var json = data.GetObjectAs<JObject>(Constants.Magnetometer);
+				
+				var magnetometer = new Magnetometer
+				{
+					x = json.GetObjectAs<float>(Constants.X),
+					y = json.GetObjectAs<float>(Constants.Z),
+					z = json.GetObjectAs<float>(Constants.Z),
+				};
+				
+				kai.MagnetometerData?.Invoke(kai,new MagnetometerEventAgrs(magnetometer));
+				AnyKai.MagnetometerData?.Invoke(kai,new MagnetometerEventAgrs(magnetometer));
 			}
 		}
 
