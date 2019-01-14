@@ -5,7 +5,7 @@ using WebSocketSharp;
 // ReSharper disable once CheckNamespace
 namespace Kai.Module
 {
-	public partial class KaiListener
+	public partial class KaiSDK
 	{
 		private static WebSocket webSocket;
 		

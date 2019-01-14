@@ -37,6 +37,9 @@ namespace Kai.Module
 		public const string Kais = "kais";
 		public const string Hand = "hand";
 		public const string Default = "default";
+		public const string DefaultKai = "defaultKai";
+		public const string DefaultLeftKai = "defaultLeftKai";
+		public const string DefaultRightKai = "defaultRightKai";
 		public const string Yaw = "yaw";
 		public const string Pitch = "pitch";
 		public const string Roll = "Roll";

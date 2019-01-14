@@ -9,7 +9,7 @@ namespace Kai.Module
 		///// <summary>
 		///// Contains a 64 bit unique identifier of a Kai
 		///// </summary>
-		//public int KaiID { get; internal set; }
+		public int KaiID { get; internal set; }
 
 		/// <summary>
 		/// Contains the capabilities of the Kai
@@ -64,12 +64,12 @@ namespace Kai.Module
 		/// <summary>
 		/// Occurs when  Gyroscope Data is received
 		/// </summary>
-		public EventHandler<GyroscopeEventAgrs> GyroscopeData;
+		public EventHandler<GyroscopeEventArgs> GyroscopeData;
 		
 		/// <summary>
 		/// Occurs when  Magnetometer Data is received
 		/// </summary>
-		public EventHandler<MagnetometerEventAgrs> MagnetometerData;
+		public EventHandler<MagnetometerEventArgs> MagnetometerData;
 
 		/// <summary>
 		/// Sets the Kai's capabilities and subscribes to that data
@@ -77,7 +77,7 @@ namespace Kai.Module
 		/// <param name="capabilities">The capabilities to set the Kai to</param>
 		public void SetCapabilities(KaiCapabilities capabilities)
 		{
-			KaiListener.SetCapabilities(capabilities, this);
+			KaiSDK.SetCapabilities(this, capabilities);
 		}
 	}
 }

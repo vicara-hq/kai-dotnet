@@ -44,22 +44,22 @@ namespace Kai.Module
 		}
 	}
 
-	public class GyroscopeEventAgrs : EventArgs
+	public class GyroscopeEventArgs : EventArgs
 	{
 		public  Gyroscope Gyroscope { get; }
 
-		public GyroscopeEventAgrs(Gyroscope gyroscope)
+		public GyroscopeEventArgs(Gyroscope gyroscope)
 		{
 			Gyroscope = gyroscope;
 		}
 		
 	}
 	
-	public class MagnetometerEventAgrs : EventArgs
+	public class MagnetometerEventArgs : EventArgs
 	{
 		public  Magnetometer Magnetometer { get; }
 
-		public MagnetometerEventAgrs(Magnetometer magnetometer)
+		public MagnetometerEventArgs(Magnetometer magnetometer)
 		{
 			Magnetometer = magnetometer;
 		}
@@ -93,11 +93,11 @@ namespace Kai.Module
 
 	public class PYREventArgs : EventArgs
 	{
-		public float Yaw { get; set; }
+		public float Yaw { get; }
 		
-		public float Pitch { get; set; }
+		public float Pitch { get; }
 		
-		public float Roll { get; set; }
+		public float Roll { get; }
 
 		public PYREventArgs(float yaw,float pitch, float roll)
 		{
@@ -130,50 +130,6 @@ namespace Kai.Module
 			Code = code;
 			Error = error;
 			Message = message;
-		}
-	}
-
-	public static class JObjectUtils
-	{
-		public static T GetObjectAs<T>(this JObject jObject, string key, T defaultValue = default, JTokenType unknownType = default)
-		{
-			return jObject.GetObjectAs(key, out _, defaultValue);
-		}
-
-		public static T GetObjectAs<T>(this JObject jObject, string key, out bool success, T defaultValue = default)
-		{
-            if (jObject == null)
-            {
-                success = false;
-                return defaultValue;
-            }
-			
-			success = true;
-			
-			switch (defaultValue)
-			{
-				case bool _ when jObject[key]?.Type == JTokenType.Boolean:
-					return jObject[key].ToObject<T>();
-				
-				case int _ when jObject[key]?.Type == JTokenType.Integer:
-					return jObject[key].ToObject<T>();
-				
-				case float _ when jObject[key]?.Type == JTokenType.Float:
-					return jObject[key].ToObject<T>();
-				
-				case string _ when jObject[key]?.Type == JTokenType.String:
-					return jObject[key].ToObject<T>();
-				
-				case JArray _ when jObject[key]?.Type == JTokenType.Array:
-					return jObject[key].ToObject<T>();
-				
-				case JObject _ when jObject[key]?.Type == JTokenType.Object:
-					return jObject[key].ToObject<T>();
-				
-				default:
-					success = false;
-					return defaultValue;
-			}
 		}
 	}
 }
