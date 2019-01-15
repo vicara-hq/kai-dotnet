@@ -89,5 +89,18 @@ namespace Kai.Module
 		{
 			return first?.KaiID != second?.KaiID;
 		}
+
+		/// <inheritdoc />
+		public override bool Equals(object obj)
+		{
+			if (!(obj is Kai))
+				return false;
+			return ((Kai) obj) == this;
+		}
+
+		public override int GetHashCode()
+		{
+			return KaiID.GetHashCode();
+		}
 	}
 }
