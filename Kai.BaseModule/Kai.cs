@@ -79,5 +79,15 @@ namespace Kai.Module
 		{
 			KaiSDK.SetCapabilities(this, capabilities);
 		}
+		
+		public static bool operator ==(Kai first, Kai second)
+		{
+			return first?.KaiID == second?.KaiID;
+		}
+
+		public static bool operator !=(Kai first, Kai second)
+		{
+			return first?.KaiID != second?.KaiID;
+		}
 	}
 }
