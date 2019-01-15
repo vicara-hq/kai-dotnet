@@ -6,9 +6,9 @@ namespace Kai.Module
 {
 	public class Kai
 	{
-		///// <summary>
-		///// Contains a 64 bit unique identifier of a Kai
-		///// </summary>
+		/// <summary>
+		/// Contains a identifier of a Kai from all the other connected Kai's
+		/// </summary>
 		public int KaiID { get; internal set; }
 
 		/// <summary>
@@ -49,7 +49,7 @@ namespace Kai.Module
 		/// <summary>
 		/// Occurs when  LinearFlick Data is received
 		/// </summary>
-		public EventHandler<LinearFlickEventArgs> LinearFlickData;
+		public EventHandler<LinearFlickEventArgs> LinearFlick;
 		
 		/// <summary>
 		/// Occurs when  Finger Positional Data is received

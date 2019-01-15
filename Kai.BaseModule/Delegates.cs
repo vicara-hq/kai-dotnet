@@ -15,7 +15,7 @@ namespace Kai.Module
 
 	public class LinearFlickEventArgs : EventArgs
 	{
-		public string Flick { get; set; }
+		public string Flick { get; }
 
 		public LinearFlickEventArgs(string flick)
 		{
@@ -25,20 +25,24 @@ namespace Kai.Module
 
 	public class FingerPositionalEventArgs : EventArgs
 	{
-		public float[] Fingers { get; }
+		public int[] Fingers { get; }
 
-		public FingerPositionalEventArgs(float[] fingers)
+		public int LittleFinger => Fingers[0];
+		public int RingFinger=> Fingers[1];
+		public int MiddleFinger  => Fingers[2];
+		public int IndexFinger => Fingers[3];
+
+		public FingerPositionalEventArgs(int[] fingers)
 		{
 			Fingers = fingers;
 		}
-		
 	}
 
 	public class AccelerometerEventArgs : EventArgs
 	{
-		public Accelerometer Accelerometer { get; }
+		public Vector3 Accelerometer { get; }
 
-		public AccelerometerEventArgs(Accelerometer accelerometer)
+		public AccelerometerEventArgs(Vector3 accelerometer)
 		{
 			Accelerometer = accelerometer;
 		}
@@ -46,9 +50,9 @@ namespace Kai.Module
 
 	public class GyroscopeEventArgs : EventArgs
 	{
-		public  Gyroscope Gyroscope { get; }
+		public Vector3 Gyroscope { get; }
 
-		public GyroscopeEventArgs(Gyroscope gyroscope)
+		public GyroscopeEventArgs(Vector3 gyroscope)
 		{
 			Gyroscope = gyroscope;
 		}
@@ -57,9 +61,9 @@ namespace Kai.Module
 	
 	public class MagnetometerEventArgs : EventArgs
 	{
-		public  Magnetometer Magnetometer { get; }
+		public Vector3 Magnetometer { get; }
 
-		public MagnetometerEventArgs(Magnetometer magnetometer)
+		public MagnetometerEventArgs(Vector3 magnetometer)
 		{
 			Magnetometer = magnetometer;
 		}
@@ -99,7 +103,7 @@ namespace Kai.Module
 		
 		public float Roll { get; }
 
-		public PYREventArgs(float yaw,float pitch, float roll)
+		public PYREventArgs(float yaw, float pitch, float roll)
 		{
 			Yaw = yaw;
 			Pitch = pitch;

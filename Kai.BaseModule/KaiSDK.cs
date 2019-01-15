@@ -44,17 +44,17 @@ namespace Kai.Module
 		/// <summary>
 		/// Contains the value of the default Kai that is connected to the SDK
 		/// </summary>
-		public static Kai DefaultKai { get; private set; }
+		public static Kai DefaultKai { get; } = new Kai();
 
 		/// <summary>
 		/// Contains the value of the default Kai that is connected to the SDK
 		/// </summary>
-		public static Kai DefaultLeftKai { get; private set; }
+		public static Kai DefaultLeftKai { get; } = new Kai();
 
 		/// <summary>
 		/// Contains the value of the default Kai that is connected to the SDK
 		/// </summary>
-		public static Kai DefaultRightKai { get; private set; }
+		public static Kai DefaultRightKai { get; } = new Kai();
 		
 		/// <summary>
 		/// Throws data when any Kai receives data
@@ -279,14 +279,11 @@ namespace Kai.Module
 
 				if (Enum.TryParse(gesture, true, out Gesture knownGesture))
 				{
-					kai.Gesture?.Invoke(kai, new GestureEventArgs(knownGesture));
-					// if default
-					AnyKai.Gesture?.Invoke(kai, new GestureEventArgs(knownGesture));
+					FireGestureEvent(new GestureEventArgs(knownGesture));
 				}
 				else
 				{
-					kai.UnknownGesture?.Invoke(kai, new UnknownGestureEventArgs(gesture));
-					AnyKai.UnknownGesture?.Invoke(kai, new UnknownGestureEventArgs(gesture));
+					FireUnknownGestureEvent(new UnknownGestureEventArgs(gesture));
 				}
 			}
 	
@@ -299,9 +296,8 @@ namespace Kai.Module
 				{
 					array[i] = dataArray[i].ToObject<bool>();
 				}
-	
-				kai.FingerShortcut?.Invoke(kai, new FingerShortcutEventArgs(array));
-				AnyKai.FingerShortcut?.Invoke(kai, new FingerShortcutEventArgs(array));
+				
+				FireFingerShortcutEvent(new FingerShortcutEventArgs(array));
 			}
 	
 			void ParseQuaternionData(JObject data)
@@ -316,84 +312,208 @@ namespace Kai.Module
 					z = json[Constants.Z].ToObject<float>()
 				};
 				
-				kai.QuaternionData?.Invoke(kai, new QuaternionEventArgs(quaternion));
-				AnyKai.QuaternionData?.Invoke(kai, new QuaternionEventArgs(quaternion));
+				FireQuaternionEvent(new QuaternionEventArgs(quaternion));
 			}
 	
 			void ParsePYRData(JObject json)
 			{
-				var yaw = json[Constants.Yaw].ToObject<float>();
 				var pitch = json[Constants.Pitch].ToObject<float>();
+				var yaw = json[Constants.Yaw].ToObject<float>();
 				var roll = json[Constants.Roll].ToObject<float>();
 				
-				kai.PYRData?.Invoke(kai, new PYREventArgs(yaw,pitch,roll));
-				AnyKai.PYRData?.Invoke(kai, new PYREventArgs(yaw,pitch,roll));
+				FirePYREvent(new PYREventArgs(pitch, yaw, roll));
 			}
 			
 			void ParseLinearFlickData(JObject data)
 			{
 				var flick = data[Constants.Flick].ToObject<string>();
-				kai.LinearFlickData?.Invoke(kai,new LinearFlickEventArgs(flick));
-				AnyKai.LinearFlickData?.Invoke(kai,new LinearFlickEventArgs(flick));
+				
+				FireLinearFlickEvent(new LinearFlickEventArgs(flick));
 			}
 
 			void ParseFingerPositionalData(JObject data)
 			{
 				var json = data[Constants.Fingers].ToObject<JObject>();
-				var array = new float[4];
+				var array = new int[4];
 				
 				for (var i = 0; i < json.Count; i++)
 				{
-					array[i] = json[i].ToObject<float>();
+					array[i] = json[i].ToObject<int>();
 				}
 				
-				kai.FingerPositionalData?.Invoke(kai,new FingerPositionalEventArgs(array));
-				AnyKai.FingerPositionalData?.Invoke(kai,new FingerPositionalEventArgs(array));
+				FireFingerPositionalEvent(new FingerPositionalEventArgs(array));
 			}
 
 			void ParseAccelerometerData(JObject data)
 			{
 				var json = data[Constants.Accelerometer].ToObject<JObject>();
 				
-				var accelerometer = new Accelerometer
+				var accelerometer = new Vector3
 				{
 					x = json[Constants.X].ToObject<float>(),
 					y = json[Constants.Y].ToObject<float>(),
 					z = json[Constants.Z].ToObject<float>()
 				};
 				
-				kai.AccelerometerData?.Invoke(kai,new AccelerometerEventArgs(accelerometer));
-				AnyKai.AccelerometerData?.Invoke(kai,new AccelerometerEventArgs(accelerometer));
+				FireAccelerometerEvent(new AccelerometerEventArgs(accelerometer));
 			}
 			
 			void ParseGyroscopeData(JObject data)
 			{
 				var json = data[Constants.Gyroscope].ToObject<JObject>();
 				
-				var gyroscope = new Gyroscope
+				var gyroscope = new Vector3
 				{
 					x = json[Constants.X].ToObject<float>(),
 					y = json[Constants.Y].ToObject<float>(),
 					z = json[Constants.Z].ToObject<float>()
 				};
 				
-				kai.GyroscopeData?.Invoke(kai,new GyroscopeEventArgs(gyroscope));
-				AnyKai.GyroscopeData?.Invoke(kai,new GyroscopeEventArgs(gyroscope));
+				FireGyroscopeEvent(new GyroscopeEventArgs(gyroscope));
 			}
 			
 			void ParseMagnetometerData(JObject data)
 			{
 				var json = data[Constants.Magnetometer].ToObject<JObject>();
 				
-				var magnetometer = new Magnetometer
+				var magnetometer = new Vector3
 				{
 					x = json[Constants.X].ToObject<float>(),
 					y = json[Constants.Y].ToObject<float>(),
 					z = json[Constants.Z].ToObject<float>()
 				};
 				
-				kai.MagnetometerData?.Invoke(kai,new MagnetometerEventArgs(magnetometer));
-				AnyKai.MagnetometerData?.Invoke(kai,new MagnetometerEventArgs(magnetometer));
+				FireMagnetometerEvent(new MagnetometerEventArgs(magnetometer));
+			}
+			
+			void FireGestureEvent(GestureEventArgs args)
+			{
+				if(defaultKai)
+					DefaultKai.Gesture?.Invoke(DefaultKai, args);
+				if(defaultLeftKai)
+					DefaultLeftKai.Gesture?.Invoke(DefaultLeftKai, args);
+				if(defaultRightKai)
+					DefaultRightKai.Gesture?.Invoke(DefaultRightKai, args);
+					
+				kai.Gesture?.Invoke(kai, args);
+				AnyKai.Gesture?.Invoke(kai, args);
+			}
+			
+			void FireUnknownGestureEvent(UnknownGestureEventArgs args)
+			{
+				if(defaultKai)
+					DefaultKai.UnknownGesture?.Invoke(DefaultKai, args);
+				if(defaultLeftKai)
+					DefaultLeftKai.UnknownGesture?.Invoke(DefaultLeftKai, args);
+				if(defaultRightKai)
+					DefaultRightKai.UnknownGesture?.Invoke(DefaultRightKai, args);
+					
+				kai.UnknownGesture?.Invoke(kai, args);
+				AnyKai.UnknownGesture?.Invoke(kai, args);
+			}
+			
+			void FireLinearFlickEvent(LinearFlickEventArgs args)
+			{
+				if(defaultKai)
+					DefaultKai.LinearFlick?.Invoke(DefaultKai, args);
+				if(defaultLeftKai)
+					DefaultLeftKai.LinearFlick?.Invoke(DefaultLeftKai, args);
+				if(defaultRightKai)
+					DefaultRightKai.LinearFlick?.Invoke(DefaultRightKai, args);
+					
+				kai.LinearFlick?.Invoke(kai, args);
+				AnyKai.LinearFlick?.Invoke(kai, args);
+			}
+			
+			void FireFingerShortcutEvent(FingerShortcutEventArgs args)
+			{
+				if(defaultKai)
+					DefaultKai.FingerShortcut?.Invoke(DefaultKai, args);
+				if(defaultLeftKai)
+					DefaultLeftKai.FingerShortcut?.Invoke(DefaultLeftKai, args);
+				if(defaultRightKai)
+					DefaultRightKai.FingerShortcut?.Invoke(DefaultRightKai, args);
+					
+				kai.FingerShortcut?.Invoke(kai, args);
+				AnyKai.FingerShortcut?.Invoke(kai, args);
+			}
+			
+			void FireFingerPositionalEvent(FingerPositionalEventArgs args)
+			{
+				if(defaultKai)
+					DefaultKai.FingerPositionalData?.Invoke(DefaultKai, args);
+				if(defaultLeftKai)
+					DefaultLeftKai.FingerPositionalData?.Invoke(DefaultLeftKai, args);
+				if(defaultRightKai)
+					DefaultRightKai.FingerPositionalData?.Invoke(DefaultRightKai, args);
+					
+				kai.FingerPositionalData?.Invoke(kai, args);
+				AnyKai.FingerPositionalData?.Invoke(kai, args);
+			}
+			
+			void FirePYREvent(PYREventArgs args)
+			{
+				if(defaultKai)
+					DefaultKai.PYRData?.Invoke(DefaultKai, args);
+				if(defaultLeftKai)
+					DefaultLeftKai.PYRData?.Invoke(DefaultLeftKai, args);
+				if(defaultRightKai)
+					DefaultRightKai.PYRData?.Invoke(DefaultRightKai, args);
+					
+				kai.PYRData?.Invoke(kai, args);
+				AnyKai.PYRData?.Invoke(kai, args);
+			}
+			
+			void FireQuaternionEvent(QuaternionEventArgs args)
+			{
+				if(defaultKai)
+					DefaultKai.QuaternionData?.Invoke(DefaultKai, args);
+				if(defaultLeftKai)
+					DefaultLeftKai.QuaternionData?.Invoke(DefaultLeftKai, args);
+				if(defaultRightKai)
+					DefaultRightKai.QuaternionData?.Invoke(DefaultRightKai, args);
+					
+				kai.QuaternionData?.Invoke(kai, args);
+				AnyKai.QuaternionData?.Invoke(kai, args);
+			}
+			
+			void FireAccelerometerEvent(AccelerometerEventArgs args)
+			{
+				if(defaultKai)
+					DefaultKai.AccelerometerData?.Invoke(DefaultKai, args);
+				if(defaultLeftKai)
+					DefaultLeftKai.AccelerometerData?.Invoke(DefaultLeftKai, args);
+				if(defaultRightKai)
+					DefaultRightKai.AccelerometerData?.Invoke(DefaultRightKai, args);
+					
+				kai.AccelerometerData?.Invoke(kai, args);
+				AnyKai.AccelerometerData?.Invoke(kai, args);
+			}
+			
+			void FireGyroscopeEvent(GyroscopeEventArgs args)
+			{
+				if(defaultKai)
+					DefaultKai.GyroscopeData?.Invoke(DefaultKai, args);
+				if(defaultLeftKai)
+					DefaultLeftKai.GyroscopeData?.Invoke(DefaultLeftKai, args);
+				if(defaultRightKai)
+					DefaultRightKai.GyroscopeData?.Invoke(DefaultRightKai, args);
+					
+				kai.GyroscopeData?.Invoke(kai, args);
+				AnyKai.GyroscopeData?.Invoke(kai, args);
+			}
+			
+			void FireMagnetometerEvent(MagnetometerEventArgs args)
+			{
+				if(defaultKai)
+					DefaultKai.MagnetometerData?.Invoke(DefaultKai, args);
+				if(defaultLeftKai)
+					DefaultLeftKai.MagnetometerData?.Invoke(DefaultLeftKai, args);
+				if(defaultRightKai)
+					DefaultRightKai.MagnetometerData?.Invoke(DefaultRightKai, args);
+					
+				kai.MagnetometerData?.Invoke(kai, args);
+				AnyKai.MagnetometerData?.Invoke(kai, args);
 			}
 		}
 
@@ -411,18 +531,36 @@ namespace Kai.Module
 				var kai = token.ToObject<JObject>();
 				var kaiID = kai[Constants.KaiId].ToObject<int>();
 				var hand = kai[Constants.Hand].ToObject<string>();
-				var def = kai[Constants.Default].ToObject<bool>();
+				var defaultKai = kai[Constants.DefaultKai]?.ToObject<bool>();
+				var defaultLeftKai = kai[Constants.DefaultKai]?.ToObject<bool>();
+				var defaultRightKai = kai[Constants.DefaultKai]?.ToObject<bool>();
 
 				if (!Enum.TryParse(hand, true, out Hand handEnum))
 					handEnum = Hand.Left;
+
+				if (defaultKai == true)
+				{
+					DefaultKai.KaiID = kaiID;
+					DefaultKai.Hand = handEnum;
+				}
+
+				if (defaultLeftKai == true)
+				{
+					DefaultLeftKai.KaiID = kaiID;
+					DefaultLeftKai.Hand = Hand.Left;
+				}
+
+				if (defaultRightKai == true)
+				{
+					DefaultRightKai.KaiID = kaiID;
+					DefaultRightKai.Hand = Hand.Right;
+				}
 				
 				connectedKais[kaiID] = new Kai
 				{
+					KaiID = kaiID,
 					Hand = handEnum
 				};
-
-				if (def)
-					DefaultKai = connectedKais[kaiID];
 			}
 		}
 	}

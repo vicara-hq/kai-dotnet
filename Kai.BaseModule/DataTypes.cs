@@ -42,30 +42,13 @@ namespace Kai.Module
 		Right
 	}
 
-	// ReSharper disable InconsistentNaming
 	public struct Vector3
 	{
-		public int x, y, z;
+		public float x, y, z;
 	}
 
 	public struct Quaternion
 	{
 		public float w, x, y, z;
 	}
-
-	public struct Accelerometer
-	{
-		public float x, y, z;
-	}
-
-	public struct Gyroscope
-	{
-		public float x, y, z;
-	}
-	
-	public struct Magnetometer
-	{
-		public float x, y, z;
-	}
-	// ReSharper restore InconsistentNaming
 }

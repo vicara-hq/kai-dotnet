@@ -10,14 +10,11 @@ namespace Kai.Module
 		public const string Message = "message";
 		public const string Gesture = "gesture";
 		public const string GestureData = "gestureData";
-		public const string LinearFlick = "linearFlick";
 		public const string FingerShortcutData = "fingerShortcutData";
-		public const string FingerShortcut = "fingerShortcut";
 		public const string Fingers = "fingers";
 		public const string FingerPositionalData = "fingerPositionalData";
 		public const string PYRData = "pyrData";
 		public const string QuaternionData = "quaternionData";
-		public const string RawData = "rawData";
 		public const string W = "w";
 		public const string X = "x";
 		public const string Y = "y";
