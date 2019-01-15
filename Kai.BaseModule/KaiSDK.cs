@@ -159,7 +159,7 @@ namespace Kai.Module
 		{
 			if (!initialised)
 			{
-				// TODO Log.Warning($"Received {data} before the listener was initialised. Ignoring...");
+				Log.Warning($"Received {data} before the listener was initialised. Ignoring...");
 				return;
 			}
 
@@ -192,10 +192,10 @@ namespace Kai.Module
 						break;
 				}
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
 				// Ignore if the data is not formatted properly
-				// TODO Log.Warning($"SDK data not formatted properly. Received: {data}");
+				Log.Warning($"Error parsing JSON. Received: {data}. Error: {e.GetType().Name} - {e.Message}: {e.StackTrace}");
 			}
 		}
 
@@ -213,15 +213,15 @@ namespace Kai.Module
 			ForegroundProcess = input[Constants.ForegroundProcess].ToObject<string>();
 			var kaiId = input[Constants.KaiId].ToObject<int>();
 			var kai = connectedKais[kaiId];
-			var defaultKai = input[Constants.DefaultKai].ToObject<bool>();
-			var defaultLeftKai = input[Constants.DefaultLeftKai].ToObject<bool>();
-			var defaultRightKai = input[Constants.DefaultRightKai].ToObject<bool>();
+			var defaultKai = input[Constants.DefaultKai]?.ToObject<bool>();
+			var defaultLeftKai = input[Constants.DefaultLeftKai]?.ToObject<bool>();
+			var defaultRightKai = input[Constants.DefaultRightKai]?.ToObject<bool>();
 
 			var dataList = input[Constants.Data].ToObject<JArray>();
 
 			if (dataList == null)
 			{
-				// TODO Log.Warning($"SDK data not formatted properly. Received: {data}");
+				Log.Warning($"Data list is null. Received: {input}");
 				return;
 			}
 
@@ -229,7 +229,7 @@ namespace Kai.Module
 			{
 				if (data.Type != JTokenType.Object)
 				{
-					// TODO Log.Warning($"SDK data not formatted properly. Received: {data}");
+					Log.Warning($"Data is not an object. Received: {data}");
 					continue;
 				}
 
@@ -386,11 +386,11 @@ namespace Kai.Module
 			
 			void FireGestureEvent(GestureEventArgs args)
 			{
-				if(defaultKai)
+				if (defaultKai == true)
 					DefaultKai.Gesture?.Invoke(DefaultKai, args);
-				if(defaultLeftKai)
+				if (defaultLeftKai == true)
 					DefaultLeftKai.Gesture?.Invoke(DefaultLeftKai, args);
-				if(defaultRightKai)
+				if (defaultRightKai == true)
 					DefaultRightKai.Gesture?.Invoke(DefaultRightKai, args);
 					
 				kai.Gesture?.Invoke(kai, args);
@@ -399,11 +399,11 @@ namespace Kai.Module
 			
 			void FireUnknownGestureEvent(UnknownGestureEventArgs args)
 			{
-				if(defaultKai)
+				if (defaultKai == true)
 					DefaultKai.UnknownGesture?.Invoke(DefaultKai, args);
-				if(defaultLeftKai)
+				if (defaultLeftKai == true)
 					DefaultLeftKai.UnknownGesture?.Invoke(DefaultLeftKai, args);
-				if(defaultRightKai)
+				if (defaultRightKai == true)
 					DefaultRightKai.UnknownGesture?.Invoke(DefaultRightKai, args);
 					
 				kai.UnknownGesture?.Invoke(kai, args);
@@ -412,11 +412,11 @@ namespace Kai.Module
 			
 			void FireLinearFlickEvent(LinearFlickEventArgs args)
 			{
-				if(defaultKai)
+				if (defaultKai == true)
 					DefaultKai.LinearFlick?.Invoke(DefaultKai, args);
-				if(defaultLeftKai)
+				if (defaultLeftKai == true)
 					DefaultLeftKai.LinearFlick?.Invoke(DefaultLeftKai, args);
-				if(defaultRightKai)
+				if (defaultRightKai == true)
 					DefaultRightKai.LinearFlick?.Invoke(DefaultRightKai, args);
 					
 				kai.LinearFlick?.Invoke(kai, args);
@@ -425,11 +425,11 @@ namespace Kai.Module
 			
 			void FireFingerShortcutEvent(FingerShortcutEventArgs args)
 			{
-				if(defaultKai)
+				if (defaultKai == true)
 					DefaultKai.FingerShortcut?.Invoke(DefaultKai, args);
-				if(defaultLeftKai)
+				if (defaultLeftKai == true)
 					DefaultLeftKai.FingerShortcut?.Invoke(DefaultLeftKai, args);
-				if(defaultRightKai)
+				if (defaultRightKai == true)
 					DefaultRightKai.FingerShortcut?.Invoke(DefaultRightKai, args);
 					
 				kai.FingerShortcut?.Invoke(kai, args);
@@ -438,11 +438,11 @@ namespace Kai.Module
 			
 			void FireFingerPositionalEvent(FingerPositionalEventArgs args)
 			{
-				if(defaultKai)
+				if (defaultKai == true)
 					DefaultKai.FingerPositionalData?.Invoke(DefaultKai, args);
-				if(defaultLeftKai)
+				if (defaultLeftKai == true)
 					DefaultLeftKai.FingerPositionalData?.Invoke(DefaultLeftKai, args);
-				if(defaultRightKai)
+				if (defaultRightKai == true)
 					DefaultRightKai.FingerPositionalData?.Invoke(DefaultRightKai, args);
 					
 				kai.FingerPositionalData?.Invoke(kai, args);
@@ -451,11 +451,11 @@ namespace Kai.Module
 			
 			void FirePYREvent(PYREventArgs args)
 			{
-				if(defaultKai)
+				if (defaultKai == true)
 					DefaultKai.PYRData?.Invoke(DefaultKai, args);
-				if(defaultLeftKai)
+				if (defaultLeftKai == true)
 					DefaultLeftKai.PYRData?.Invoke(DefaultLeftKai, args);
-				if(defaultRightKai)
+				if (defaultRightKai == true)
 					DefaultRightKai.PYRData?.Invoke(DefaultRightKai, args);
 					
 				kai.PYRData?.Invoke(kai, args);
@@ -464,11 +464,11 @@ namespace Kai.Module
 			
 			void FireQuaternionEvent(QuaternionEventArgs args)
 			{
-				if(defaultKai)
+				if (defaultKai == true)
 					DefaultKai.QuaternionData?.Invoke(DefaultKai, args);
-				if(defaultLeftKai)
+				if (defaultLeftKai == true)
 					DefaultLeftKai.QuaternionData?.Invoke(DefaultLeftKai, args);
-				if(defaultRightKai)
+				if (defaultRightKai == true)
 					DefaultRightKai.QuaternionData?.Invoke(DefaultRightKai, args);
 					
 				kai.QuaternionData?.Invoke(kai, args);
@@ -477,11 +477,11 @@ namespace Kai.Module
 			
 			void FireAccelerometerEvent(AccelerometerEventArgs args)
 			{
-				if(defaultKai)
+				if (defaultKai == true)
 					DefaultKai.AccelerometerData?.Invoke(DefaultKai, args);
-				if(defaultLeftKai)
+				if (defaultLeftKai == true)
 					DefaultLeftKai.AccelerometerData?.Invoke(DefaultLeftKai, args);
-				if(defaultRightKai)
+				if (defaultRightKai == true)
 					DefaultRightKai.AccelerometerData?.Invoke(DefaultRightKai, args);
 					
 				kai.AccelerometerData?.Invoke(kai, args);
@@ -490,11 +490,11 @@ namespace Kai.Module
 			
 			void FireGyroscopeEvent(GyroscopeEventArgs args)
 			{
-				if(defaultKai)
+				if (defaultKai == true)
 					DefaultKai.GyroscopeData?.Invoke(DefaultKai, args);
-				if(defaultLeftKai)
+				if (defaultLeftKai == true)
 					DefaultLeftKai.GyroscopeData?.Invoke(DefaultLeftKai, args);
-				if(defaultRightKai)
+				if (defaultRightKai == true)
 					DefaultRightKai.GyroscopeData?.Invoke(DefaultRightKai, args);
 					
 				kai.GyroscopeData?.Invoke(kai, args);
@@ -503,11 +503,11 @@ namespace Kai.Module
 			
 			void FireMagnetometerEvent(MagnetometerEventArgs args)
 			{
-				if(defaultKai)
+				if (defaultKai == true)
 					DefaultKai.MagnetometerData?.Invoke(DefaultKai, args);
-				if(defaultLeftKai)
+				if (defaultLeftKai == true)
 					DefaultLeftKai.MagnetometerData?.Invoke(DefaultLeftKai, args);
-				if(defaultRightKai)
+				if (defaultRightKai == true)
 					DefaultRightKai.MagnetometerData?.Invoke(DefaultRightKai, args);
 					
 				kai.MagnetometerData?.Invoke(kai, args);

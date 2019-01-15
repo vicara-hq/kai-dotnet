@@ -14,5 +14,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Delegates.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Kai.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KaiSDK.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
   </ItemGroup>
 </Project>
