@@ -47,12 +47,12 @@ namespace Kai.Module
 		public static Kai DefaultKai { get; } = new Kai();
 
 		/// <summary>
-		/// Contains the value of the default Kai that is connected to the SDK
+		/// Contains the value of the default left Kai that is connected to the SDK
 		/// </summary>
 		public static Kai DefaultLeftKai { get; } = new Kai();
 
 		/// <summary>
-		/// Contains the value of the default Kai that is connected to the SDK
+		/// Contains the value of the default right Kai that is connected to the SDK
 		/// </summary>
 		public static Kai DefaultRightKai { get; } = new Kai();
 		
@@ -60,8 +60,6 @@ namespace Kai.Module
 		/// Throws data when any Kai receives data
 		/// </summary>
 		public static Kai AnyKai { get; } = new Kai();
-		
-		// TODO LeftKai and RightKai
 
 		/// <summary>
 		/// Initialises the SDK. This function *has* to be called before receiving data from the Kai
