@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 // ReSharper disable once CheckNamespace
 namespace Kai.Module
 {
-	public static partial class KaiListener
+	public static partial class KaiSDK
 	{
 		private static bool running;
 		
