@@ -31,6 +31,7 @@ namespace Kai.Module
 		public const string ForegroundProcess = "foregroundProcess";
 		public const string ModuleId = "moduleId";
 		public const string ConnectedKais = "connectedKais";
+		public const string KaiConnected = "kaiConnected";
 		public const string Kais = "kais";
 		public const string Hand = "hand";
 		public const string Default = "default";
