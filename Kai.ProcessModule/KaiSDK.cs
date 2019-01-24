@@ -18,7 +18,7 @@ namespace Kai.Module
 
 		static partial void Send(string data)
 		{
-			Console.WriteLine(data);
+			Log.Warning("Sending: " + data);
 		}
 
 		private static void ConsoleCancelled(object sender, ConsoleCancelEventArgs e)
