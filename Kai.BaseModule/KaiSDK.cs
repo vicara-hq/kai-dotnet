@@ -553,12 +553,13 @@ namespace Kai.Module
 		private static void DecodeKaiConnected(JObject input)
 		{
 			var kaiID = input[Constants.KaiId].ToObject<int>();
-			var hand = input[Constants.Hand].ToObject<string>(); // optional out for KaiConnected
+			var hand = input[Constants.Hand].ToObject<string>();
 			var defaultKai = input[Constants.DefaultKai]?.ToObject<bool>();
 			var defaultLeftKai = input[Constants.DefaultKai]?.ToObject<bool>();
 			var defaultRightKai = input[Constants.DefaultKai]?.ToObject<bool>();
-			var kaiSerialNumber = input[Constants.KaiSerialNumber].ToObject<bool>(); // optional for KaiConnected
+			var kaiSerialNumber = input[Constants.KaiSerialNumber].ToObject<bool>();
 
+			//var kaiParsed = KaiObjectParsed.Parse(input);
 			if (!Enum.TryParse(hand, true, out Hand handEnum))
 				handEnum = Hand.Left;
 			

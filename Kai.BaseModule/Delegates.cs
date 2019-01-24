@@ -136,5 +136,4 @@ namespace Kai.Module
 			Message = message;
 		}
 	}
-	public delegate void LogStream(string s); // stream library logs to cc module
 }
