@@ -7,7 +7,7 @@ namespace Kai.Module
 {
 	public static partial class KaiSDK
 	{
-		private static Kai[] connectedKais = new Kai[8];
+		public static Kai[] connectedKais { get; private set; } = new Kai[8];
 		private static bool initialised;
 
 		/// <summary>
@@ -89,21 +89,35 @@ namespace Kai.Module
 			// Test compatibility
 			// Send capabilities
 		}
-		
+
 		/// <summary>
 		/// Sets the Kai's capabilities and subscribes to that data
 		/// </summary>
 		/// <param name="capabilities">The capabilities to set the Kai to</param>
 		/// <param name="kai">The kai to set the capabilities to</param>
+		public static void GetConnectedKais()
+		{
+			Send(new JObject()
+			{
+				[Constants.Type] = Constants.ListConnectedKais
+			}.ToString(Formatting.None));	
+		}
+		
 		public static void SetCapabilities(Kai kai, KaiCapabilities capabilities)
 		{
-			if(!Authenticated)
-				throw new ApplicationException("module not authenticated");
+			kai.Capabilities = capabilities;
+			if (!Authenticated)
+				return;
 
 			var json = new JObject
 			{
-				[Constants.Type] = Constants.SetCapabilities
+				[Constants.Type] = Constants.SetCapabilities,
+				[Constants.KaiId] = kai.KaiID
 			};
+			
+			/*
+			 * TODO check ig kai == DefaultKai/ DefaultLeftKai/ DefaultRightKai and set value of kaiId in json accordingly
+			 */
 
 			if (capabilities.HasFlag(KaiCapabilities.GestureData))
 				json.Add(Constants.GestureData, true);
@@ -179,13 +193,16 @@ namespace Kai.Module
 				switch (type)
 				{
 					case Constants.Authentication:
-						DecodeAuthentication(input);
+						DecodeAuthentication();
 						break;
 					case Constants.IncomingData:
 						DecodeIncomingData(input);
 						break;
-					case Constants.ConnectedKais:
+					case Constants.ListConnectedKais:
 						DecodeConnectedKais(input);
+						break;
+					case Constants.KaiConnected:
+						DecodeKaiConnected(input);
 						break;
 					default:
 						UnknownData?.Invoke(input);
@@ -515,9 +532,10 @@ namespace Kai.Module
 			}
 		}
 
-		private static void DecodeAuthentication(JObject input)
+		private static void DecodeAuthentication()
 		{
-			Authenticated = input[Constants.Authenticated].ToObject<bool>();
+			Authenticated = true;
+			GetConnectedKais();
 		}
 
 		private static void DecodeConnectedKais(JObject input)
@@ -525,41 +543,49 @@ namespace Kai.Module
 			var kaiList = input[Constants.Kais].ToObject<JArray>();
 			connectedKais = new Kai[8];
 			foreach (var token in kaiList)
+				DecodeKaiConnected((JObject)token);
+			
+			DefaultKai.SetCapabilities(DefaultKai.Capabilities);
+			DefaultLeftKai.SetCapabilities(DefaultLeftKai.Capabilities);
+			DefaultRightKai.SetCapabilities(DefaultRightKai.Capabilities);
+		}
+
+		private static void DecodeKaiConnected(JObject input)
+		{
+			var kaiID = input[Constants.KaiId].ToObject<int>();
+			var hand = input[Constants.Hand].ToObject<string>();
+			var defaultKai = input[Constants.DefaultKai]?.ToObject<bool>();
+			var defaultLeftKai = input[Constants.DefaultKai]?.ToObject<bool>();
+			var defaultRightKai = input[Constants.DefaultKai]?.ToObject<bool>();
+			var kaiSerialNumber = input[Constants.KaiSerialNumber].ToObject<bool>();
+
+			//var kaiParsed = KaiObjectParsed.Parse(input);
+			if (!Enum.TryParse(hand, true, out Hand handEnum))
+				handEnum = Hand.Left;
+			
+			if (defaultKai == true)
 			{
-				var kai = token.ToObject<JObject>();
-				var kaiID = kai[Constants.KaiId].ToObject<int>();
-				var hand = kai[Constants.Hand].ToObject<string>();
-				var defaultKai = kai[Constants.DefaultKai]?.ToObject<bool>();
-				var defaultLeftKai = kai[Constants.DefaultKai]?.ToObject<bool>();
-				var defaultRightKai = kai[Constants.DefaultKai]?.ToObject<bool>();
-
-				if (!Enum.TryParse(hand, true, out Hand handEnum))
-					handEnum = Hand.Left;
-
-				if (defaultKai == true)
-				{
-					DefaultKai.KaiID = kaiID;
-					DefaultKai.Hand = handEnum;
-				}
-
-				if (defaultLeftKai == true)
-				{
-					DefaultLeftKai.KaiID = kaiID;
-					DefaultLeftKai.Hand = Hand.Left;
-				}
-
-				if (defaultRightKai == true)
-				{
-					DefaultRightKai.KaiID = kaiID;
-					DefaultRightKai.Hand = Hand.Right;
-				}
-				
-				connectedKais[kaiID] = new Kai
-				{
-					KaiID = kaiID,
-					Hand = handEnum
-				};
+				DefaultKai.KaiID = kaiID;
+				DefaultKai.Hand = handEnum;
 			}
+
+			if (defaultLeftKai == true)
+			{
+				DefaultLeftKai.KaiID = kaiID;
+				DefaultLeftKai.Hand = Hand.Left;
+			}
+
+			if (defaultRightKai == true)
+			{
+				DefaultRightKai.KaiID = kaiID;
+				DefaultRightKai.Hand = Hand.Right;
+			}
+			
+			connectedKais[kaiID] = new Kai
+			{
+				KaiID = kaiID,
+				Hand = handEnum
+			};
 		}
 	}
 }

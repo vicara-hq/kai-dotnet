@@ -30,7 +30,8 @@ namespace Kai.Module
 		public const string KaiId = "kaiId";
 		public const string ForegroundProcess = "foregroundProcess";
 		public const string ModuleId = "moduleId";
-		public const string ConnectedKais = "connectedKais";
+		public const string ListConnectedKais = "listConnectedKais";
+		public const string KaiConnected = "kaiConnected";
 		public const string Kais = "kais";
 		public const string Hand = "hand";
 		public const string Default = "default";
@@ -46,6 +47,6 @@ namespace Kai.Module
 		public const string GyroscopeData = "gyroscopeData";
 		public const string MagnetometerData = "magnetometerData";
 		public const string Magnetometer = "magnetometer";
-
+		public const string KaiSerialNumber = "kaiSerialNumber";
 	}
 }
