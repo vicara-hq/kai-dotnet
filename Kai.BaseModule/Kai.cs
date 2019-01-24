@@ -72,12 +72,21 @@ namespace Kai.Module
 		public EventHandler<MagnetometerEventArgs> MagnetometerData;
 
 		/// <summary>
-		/// Sets the Kai's capabilities and subscribes to that data
+		/// Set the Kai's capabilities and subscribes to that data
 		/// </summary>
 		/// <param name="capabilities">The capabilities to set the Kai to</param>
 		public void SetCapabilities(KaiCapabilities capabilities)
 		{
 			KaiSDK.SetCapabilities(this, capabilities);
+		}
+		
+		/// <summary>
+		/// Unset the Kai's capabilities and subscribes to that data
+		/// </summary>
+		/// <param name="capabilities">The capabilities to set the Kai to</param>
+		public void UnsetCapabilities(KaiCapabilities capabilities)
+		{
+			KaiSDK.UnsetCapabilities(this, capabilities);
 		}
 		
 		public static bool operator ==(Kai first, Kai second)

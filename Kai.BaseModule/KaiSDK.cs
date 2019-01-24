@@ -87,37 +87,51 @@ namespace Kai.Module
 			
 			// TODO check compatibility with SDK
 			// Test compatibility
-			// Send capabilities
 		}
 
 		/// <summary>
-		/// Sets the Kai's capabilities and subscribes to that data
+		/// Gets the list of all connected Kais
 		/// </summary>
-		/// <param name="capabilities">The capabilities to set the Kai to</param>
-		/// <param name="kai">The kai to set the capabilities to</param>
 		public static void GetConnectedKais()
 		{
 			Send(new JObject()
 			{
 				[Constants.Type] = Constants.ListConnectedKais
-			}.ToString(Formatting.None));	
+			}.ToString(Formatting.None));
 		}
 		
+		/// <summary>
+		/// Set the Kai's capabilities and subscribes to that data
+		/// </summary>
+		/// <param name="capabilities">The capabilities to set the Kai to</param>
+		/// <param name="kai">The kai to set the capabilities to</param>
 		public static void SetCapabilities(Kai kai, KaiCapabilities capabilities)
 		{
-			kai.Capabilities = capabilities;
+			kai.Capabilities |= capabilities;
 			if (!Authenticated)
 				return;
 
 			var json = new JObject
 			{
-				[Constants.Type] = Constants.SetCapabilities,
-				[Constants.KaiId] = kai.KaiID
+				[Constants.Type] = Constants.SetCapabilities
 			};
-			
-			/*
-			 * TODO check ig kai == DefaultKai/ DefaultLeftKai/ DefaultRightKai and set value of kaiId in json accordingly
-			 */
+
+			if (ReferenceEquals(kai, DefaultKai))
+			{
+				json.Add(Constants.KaiID, Constants.Default);
+			}
+			else if (ReferenceEquals(kai, DefaultLeftKai))
+			{
+				json.Add(Constants.KaiID, Constants.DefaultLeft);
+			}
+			else if (ReferenceEquals(kai, DefaultRightKai))
+			{
+				json.Add(Constants.KaiID, Constants.DefaultRight);
+			}
+			else
+			{
+				json.Add(Constants.KaiID, kai.KaiID);
+			}
 
 			if (capabilities.HasFlag(KaiCapabilities.GestureData))
 				json.Add(Constants.GestureData, true);
@@ -145,6 +159,69 @@ namespace Kai.Module
 			
 			if (capabilities.HasFlag(KaiCapabilities.MagnetometerData))
 				json.Add(Constants.MagnetometerData, true);
+			
+			Send(json.ToString(Formatting.None));
+		}
+		
+		/// <summary>
+		/// Unset the Kai's capabilities and subscribes to that data
+		/// </summary>
+		/// <param name="capabilities">The capabilities to set the Kai to</param>
+		/// <param name="kai">The kai to set the capabilities to</param>
+		public static void UnsetCapabilities(Kai kai, KaiCapabilities capabilities)
+		{
+			kai.Capabilities &= ~capabilities; // value = value AND NOT parameter. This will unset the parameter from the value
+			if (!Authenticated)
+				return;
+
+			var json = new JObject
+			{
+				[Constants.Type] = Constants.SetCapabilities
+			};
+
+			if (ReferenceEquals(kai, DefaultKai))
+			{
+				json.Add(Constants.KaiID, Constants.Default);
+			}
+			else if (ReferenceEquals(kai, DefaultLeftKai))
+			{
+				json.Add(Constants.KaiID, Constants.DefaultLeft);
+			}
+			else if (ReferenceEquals(kai, DefaultRightKai))
+			{
+				json.Add(Constants.KaiID, Constants.DefaultRight);
+			}
+			else
+			{
+				json.Add(Constants.KaiID, kai.KaiID);
+			}
+
+			if (capabilities.HasFlag(KaiCapabilities.GestureData))
+				json.Add(Constants.GestureData, false);
+			
+			if (capabilities.HasFlag(KaiCapabilities.LinearFlickData))
+				json.Add(Constants.LinearFlickData, false);
+			
+			if (capabilities.HasFlag(KaiCapabilities.FingerShortcutData))
+				json.Add(Constants.FingerShortcutData, false);
+			
+			if (capabilities.HasFlag(KaiCapabilities.FingerPositionalData))
+				json.Add(Constants.FingerPositionalData, false);
+			
+			if (capabilities.HasFlag(KaiCapabilities.PYRData))
+				json.Add(Constants.PYRData, false);
+			
+			if (capabilities.HasFlag(KaiCapabilities.QuaternionData))
+				json.Add(Constants.QuaternionData, false);
+			
+			if (capabilities.HasFlag(KaiCapabilities.AccelerometerData))
+				json.Add(Constants.AccelerometerData, false);
+			
+			if (capabilities.HasFlag(KaiCapabilities.GyroscopeData))
+				json.Add(Constants.GyroscopeData, false);
+			
+			if (capabilities.HasFlag(KaiCapabilities.MagnetometerData))
+				json.Add(Constants.MagnetometerData, false);
 			
 			Send(json.ToString(Formatting.None));
 		}
@@ -228,7 +305,7 @@ namespace Kai.Module
 		private static void DecodeIncomingData(JObject input)
 		{
 			ForegroundProcess = input[Constants.ForegroundProcess].ToObject<string>();
-			var kaiId = input[Constants.KaiId].ToObject<int>();
+			var kaiId = input[Constants.KaiID].ToObject<int>();
 			var kai = connectedKais[kaiId];
 			var defaultKai = input[Constants.DefaultKai]?.ToObject<bool>();
 			var defaultLeftKai = input[Constants.DefaultLeftKai]?.ToObject<bool>();
@@ -552,7 +629,7 @@ namespace Kai.Module
 
 		private static void DecodeKaiConnected(JObject input)
 		{
-			var kaiID = input[Constants.KaiId].ToObject<int>();
+			var kaiID = input[Constants.KaiID].ToObject<int>();
 			var hand = input[Constants.Hand].ToObject<string>();
 			var defaultKai = input[Constants.DefaultKai]?.ToObject<bool>();
 			var defaultLeftKai = input[Constants.DefaultKai]?.ToObject<bool>();

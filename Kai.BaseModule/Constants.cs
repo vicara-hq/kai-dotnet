@@ -27,7 +27,7 @@ namespace Kai.Module
 		public const string IncomingData = "incomingData";
 		public const string Authentication = "authentication";
 		public const string Authenticated = "authenticated";
-		public const string KaiId = "kaiId";
+		public const string KaiID = "kaiId";
 		public const string ForegroundProcess = "foregroundProcess";
 		public const string ModuleId = "moduleId";
 		public const string ListConnectedKais = "listConnectedKais";
@@ -37,7 +37,9 @@ namespace Kai.Module
 		public const string Default = "default";
 		public const string DefaultKai = "defaultKai";
 		public const string DefaultLeftKai = "defaultLeftKai";
+		public const string DefaultLeft = "defaultLeft";
 		public const string DefaultRightKai = "defaultRightKai";
+		public const string DefaultRight = "defaultRight";
 		public const string Yaw = "yaw";
 		public const string Pitch = "pitch";
 		public const string Roll = "Roll";
