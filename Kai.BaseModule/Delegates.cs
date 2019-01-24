@@ -136,4 +136,5 @@ namespace Kai.Module
 			Message = message;
 		}
 	}
+	public delegate void LogStream(string data);
 }
