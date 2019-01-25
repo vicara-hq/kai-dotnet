@@ -70,6 +70,7 @@ namespace Kai.Module
 			ModuleSecret = moduleSecret;
 			
 			initialised = true;
+			Log.Init(Log.Level.Verbose);
 		}
 
 		/// <summary>
@@ -250,7 +251,7 @@ namespace Kai.Module
 		{
 			if (!initialised)
 			{
-				Log.Warning($"Received {data} before the listener was initialised. Ignoring...");
+				Log.Warn($"Received {data} before the listener was initialised. Ignoring...");
 				return;
 			}
 
@@ -289,7 +290,7 @@ namespace Kai.Module
 			catch (Exception e)
 			{
 				// Ignore if the data is not formatted properly
-				Log.Warning($"Error parsing JSON. Received: {data}. Error: {e.GetType().Name} - {e.Message}: {e.StackTrace}");
+				Log.Warn($"Error parsing JSON. Received: {data}. Error: {e.GetType().Name} - {e.Message}: {e.StackTrace}");
 			}
 		}
 
@@ -315,7 +316,7 @@ namespace Kai.Module
 
 			if (dataList == null)
 			{
-				Log.Warning($"Data list is null. Received: {input}");
+				Log.Warn($"Data list is null. Received: {input}");
 				return;
 			}
 
@@ -323,7 +324,7 @@ namespace Kai.Module
 			{
 				if (data.Type != JTokenType.Object)
 				{
-					Log.Warning($"Data is not an object. Received: {data}");
+					Log.Warn($"Data is not an object. Received: {data}");
 					continue;
 				}
 
