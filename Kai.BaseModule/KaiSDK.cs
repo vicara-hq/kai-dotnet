@@ -7,7 +7,7 @@ namespace Kai.Module
 {
 	public static partial class KaiSDK
 	{
-		public static Kai[] connectedKais { get; private set; } = new Kai[8];
+		private static Kai[] connectedKais { get; } = new Kai[8];
 		private static bool initialised;
 
 		/// <summary>
@@ -74,6 +74,16 @@ namespace Kai.Module
 		}
 
 		/// <summary>
+		/// Gets the Kai object by the Kai ID
+		/// </summary>
+		public static Kai GetKaiByID(byte kaiId)
+		{
+			if (kaiId >= 8)
+				throw new ArgumentOutOfRangeException(nameof(kaiId));
+			return connectedKais[kaiId];
+		}
+
+		/// <summary>
 		/// Connects to the SDK and starts receiving data
 		/// </summary>
 		/// <exception cref="ApplicationException">Thrown if this function is called before Initialise()</exception>
@@ -95,10 +105,12 @@ namespace Kai.Module
 		/// </summary>
 		public static void GetConnectedKais()
 		{
-			Send(new JObject()
-			{
-				[Constants.Type] = Constants.ListConnectedKais
-			}.ToString(Formatting.None));
+			Send(
+				new JObject()
+				{
+					[Constants.Type] = Constants.ListConnectedKais
+				}.ToString(Formatting.None)
+			);
 		}
 		
 		/// <summary>
@@ -619,23 +631,18 @@ namespace Kai.Module
 		private static void DecodeConnectedKais(JObject input)
 		{
 			var kaiList = input[Constants.Kais].ToObject<JArray>();
-			connectedKais = new Kai[8];
 			foreach (var token in kaiList)
-				DecodeKaiConnected((JObject)token);
-			
-			DefaultKai.SetCapabilities(DefaultKai.Capabilities);
-			DefaultLeftKai.SetCapabilities(DefaultLeftKai.Capabilities);
-			DefaultRightKai.SetCapabilities(DefaultRightKai.Capabilities);
+				DecodeKaiConnected((JObject) token);
 		}
 
 		private static void DecodeKaiConnected(JObject input)
 		{
 			var kaiID = input[Constants.KaiID].ToObject<int>();
-			var hand = input[Constants.Hand].ToObject<string>();
+			var hand = input[Constants.Hand]?.ToObject<string>(); // will not be optional in future
 			var defaultKai = input[Constants.DefaultKai]?.ToObject<bool>();
-			var defaultLeftKai = input[Constants.DefaultKai]?.ToObject<bool>();
-			var defaultRightKai = input[Constants.DefaultKai]?.ToObject<bool>();
-			var kaiSerialNumber = input[Constants.KaiSerialNumber].ToObject<bool>();
+			var defaultLeftKai = input[Constants.DefaultLeftKai]?.ToObject<bool>();
+			var defaultRightKai = input[Constants.DefaultRightKai]?.ToObject<bool>();
+			var kaiSerialNumber = input[Constants.KaiSerialNumber]?.ToObject<bool>(); // will not be optional in future
 
 			//var kaiParsed = KaiObjectParsed.Parse(input);
 			if (!Enum.TryParse(hand, true, out Hand handEnum))
@@ -664,6 +671,16 @@ namespace Kai.Module
 				KaiID = kaiID,
 				Hand = handEnum
 			};
+			
+			if(defaultKai==true || defaultLeftKai==true || defaultRightKai==true)
+				ResetDefaultCapabilities();
+		}
+
+		private static void ResetDefaultCapabilities()
+		{
+			DefaultKai.SetCapabilities(DefaultKai.Capabilities);
+			DefaultLeftKai.SetCapabilities(DefaultLeftKai.Capabilities);
+			DefaultRightKai.SetCapabilities(DefaultRightKai.Capabilities);
 		}
 	}
 }
