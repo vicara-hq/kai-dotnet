@@ -630,9 +630,9 @@ namespace Kai.Module
 		{
 			var kaiID = input[Constants.KaiID].ToObject<int>();
 			var hand = input[Constants.Hand]?.ToObject<string>(); // will not be optional in future
-			var defaultKai = input[Constants.Default]?.ToObject<bool>();
-			var defaultLeftKai = input[Constants.DefaultLeft]?.ToObject<bool>();
-			var defaultRightKai = input[Constants.DefaultRight]?.ToObject<bool>();
+			var defaultKai = input[Constants.DefaultKai]?.ToObject<bool>();
+			var defaultLeftKai = input[Constants.DefaultLeftKai]?.ToObject<bool>();
+			var defaultRightKai = input[Constants.DefaultRightKai]?.ToObject<bool>();
 			var kaiSerialNumber = input[Constants.KaiSerialNumber]?.ToObject<bool>(); // will not be optional in future
 
 			//var kaiParsed = KaiObjectParsed.Parse(input);
