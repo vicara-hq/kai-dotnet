@@ -12,6 +12,63 @@ namespace Kai.Module
 			Gesture = gesture;
 		}
 	}
+
+	public class LinearFlickEventArgs : EventArgs
+	{
+		public string Flick { get; }
+
+		public LinearFlickEventArgs(string flick)
+		{
+			Flick = flick;
+		}
+	}
+
+	public class FingerPositionalEventArgs : EventArgs
+	{
+		public int[] Fingers { get; }
+
+		public int LittleFinger => Fingers[0];
+		public int RingFinger=> Fingers[1];
+		public int MiddleFinger  => Fingers[2];
+		public int IndexFinger => Fingers[3];
+
+		public FingerPositionalEventArgs(int[] fingers)
+		{
+			Fingers = fingers;
+		}
+	}
+
+	public class AccelerometerEventArgs : EventArgs
+	{
+		public Vector3 Accelerometer { get; }
+
+		public AccelerometerEventArgs(Vector3 accelerometer)
+		{
+			Accelerometer = accelerometer;
+		}
+	}
+
+	public class GyroscopeEventArgs : EventArgs
+	{
+		public Vector3 Gyroscope { get; }
+
+		public GyroscopeEventArgs(Vector3 gyroscope)
+		{
+			Gyroscope = gyroscope;
+		}
+		
+	}
+	
+	public class MagnetometerEventArgs : EventArgs
+	{
+		public Vector3 Magnetometer { get; }
+
+		public MagnetometerEventArgs(Vector3 magnetometer)
+		{
+			Magnetometer = magnetometer;
+		}
+		
+	}
 	
 	public class UnknownGestureEventArgs : EventArgs
 	{
@@ -40,13 +97,17 @@ namespace Kai.Module
 
 	public class PYREventArgs : EventArgs
 	{
-		public Vector3 Accelerometer { get; }
-		public Vector3 Gyroscope { get; }
+		public float Yaw { get; }
+		
+		public float Pitch { get; }
+		
+		public float Roll { get; }
 
-		public PYREventArgs(Vector3 accelerometer, Vector3 gyroscope)
+		public PYREventArgs(float yaw, float pitch, float roll)
 		{
-			Accelerometer = accelerometer;
-			Gyroscope = gyroscope;
+			Yaw = yaw;
+			Pitch = pitch;
+			Roll = roll;
 		}
 	}
 
@@ -75,48 +136,5 @@ namespace Kai.Module
 			Message = message;
 		}
 	}
-
-	public static class JObjectUtils
-	{
-		public static T GetObjectAs<T>(this JObject jObject, string key, T defaultValue = default, JTokenType unknownType = default)
-		{
-			return jObject.GetObjectAs<T>(key, out var _, defaultValue, unknownType);
-		}
-
-		public static T GetObjectAs<T>(this JObject jObject, string key, out bool success, T defaultValue = default, JTokenType unknownType = default)
-		{
-            if (jObject == null)
-            {
-                success = false;
-                return defaultValue;
-            }
-			
-			success = true;
-			
-			switch (defaultValue)
-			{
-				case bool _ when jObject[key]?.Type == JTokenType.Boolean:
-					return (T) jObject[key].ToObject(typeof(bool));
-				
-				case int _ when jObject[key]?.Type == JTokenType.Integer:
-					return (T) jObject[key].ToObject(typeof(int));
-				
-				case float _ when jObject[key]?.Type == JTokenType.Float:
-					return (T) jObject[key].ToObject(typeof(float));
-				
-				case string _ when jObject[key]?.Type == JTokenType.String:
-					return (T) jObject[key].ToObject(typeof(string));
-				
-				case JArray _ when jObject[key]?.Type == JTokenType.Array:
-					return (T) jObject[key].ToObject(typeof(JArray));
-				
-				case JObject _ when jObject[key]?.Type == JTokenType.Object:
-					return (T) jObject[key].ToObject(typeof(JObject));
-				
-				default:
-					success = false;
-					return jObject.ToObject<T>();
-			}
-		}
-	}
+	public delegate void ModuleLogStream(string data);
 }
