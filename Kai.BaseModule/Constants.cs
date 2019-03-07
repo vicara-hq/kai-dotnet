@@ -42,7 +42,7 @@ namespace Kai.Module
 		public const string DefaultRight = "defaultRight";
 		public const string Yaw = "yaw";
 		public const string Pitch = "pitch";
-		public const string Roll = "Roll";
+		public const string Roll = "roll";
 		public const string LinearFlickData = "linearFlickData";
 		public const string Flick = "flick";
 		public const string AccelerometerData = "accelerometerData";
