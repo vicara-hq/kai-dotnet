@@ -642,25 +642,30 @@ namespace Kai.Module
 			var defaultKai = input[Constants.DefaultKai]?.ToObject<bool>();
 			var defaultLeftKai = input[Constants.DefaultLeftKai]?.ToObject<bool>();
 			var defaultRightKai = input[Constants.DefaultRightKai]?.ToObject<bool>();
+			
+			var defaultK = input[Constants.Default]?.ToObject<bool>();
+			var defaultLeft = input[Constants.DefaultLeft]?.ToObject<bool>();
+			var defaultRight = input[Constants.DefaultRight]?.ToObject<bool>();
+			
 			var kaiSerialNumber = input[Constants.KaiSerialNumber]?.ToObject<bool>(); // will not be optional in future
 
 			//var kaiParsed = KaiObjectParsed.Parse(input);
 			if (!Enum.TryParse(hand, true, out Hand handEnum))
 				handEnum = Hand.Left;
 			
-			if (defaultKai == true)
+			if (defaultKai == true || defaultK  == true)
 			{
 				DefaultKai.KaiID = kaiID;
 				DefaultKai.Hand = handEnum;
 			}
 
-			if (defaultLeftKai == true)
+			if (defaultLeftKai == true || defaultLeft == true)
 			{
 				DefaultLeftKai.KaiID = kaiID;
 				DefaultLeftKai.Hand = Hand.Left;
 			}
 
-			if (defaultRightKai == true)
+			if (defaultRightKai == true || defaultRight == true)
 			{
 				DefaultRightKai.KaiID = kaiID;
 				DefaultRightKai.Hand = Hand.Right;
@@ -671,9 +676,12 @@ namespace Kai.Module
 				KaiID = kaiID,
 				Hand = handEnum
 			};
-			
-			if(defaultKai==true || defaultLeftKai==true || defaultRightKai==true)
+
+			if (defaultKai == true || defaultLeftKai == true || defaultRightKai == true
+			    || defaultK == true || defaultLeft == true || defaultRight == true)
+			{
 				ResetDefaultCapabilities();
+			}
 		}
 
 		private static void ResetDefaultCapabilities()
