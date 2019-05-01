@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Kai.WebSocketModule</id>
-    <version>1.0.0.3</version>
+    <version>1.0.0.4</version>
     <authors>vicara-hq</authors>
     <owners>vicara-hq</owners>
     <!--licenseUrl>https://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
