@@ -678,9 +678,9 @@ namespace Kai.Module
 
 		private static void ResetDefaultCapabilities()
 		{
-			DefaultKai.SetCapabilities(DefaultKai.Capabilities);
 			DefaultLeftKai.SetCapabilities(DefaultLeftKai.Capabilities);
 			DefaultRightKai.SetCapabilities(DefaultRightKai.Capabilities);
+			DefaultKai.SetCapabilities(DefaultKai.Capabilities);
 		}
 	}
 }
