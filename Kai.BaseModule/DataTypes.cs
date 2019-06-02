@@ -5,15 +5,15 @@ namespace Kai.Module
 	[Flags]
 	public enum KaiCapabilities
 	{
-		GestureData,
-		LinearFlickData,
-		FingerShortcutData,
-		FingerPositionalData,
-		PYRData,
-		QuaternionData,
-		AccelerometerData,
-		GyroscopeData,
-		MagnetometerData
+		GestureData = 1,
+		LinearFlickData = 2,
+		FingerShortcutData = 4,
+		FingerPositionalData = 8,
+		PYRData = 16,
+		QuaternionData = 32,
+		AccelerometerData = 64,
+		GyroscopeData = 128,
+		MagnetometerData = 256
 	}
 
 	public enum Gesture

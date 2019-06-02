@@ -7,8 +7,8 @@
     <ProjectGuid>{F5AC2204-DD46-4D75-A3DA-7D80D81056AC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kai.WebSocketModule</RootNamespace>
-    <AssemblyName>Kai.WebSocketModule</AssemblyName>
+    <RootNamespace>Kai.Module.WebSocketModule</RootNamespace>
+    <AssemblyName>Kai.Module.WebSocketModule</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>latest</LangVersion>
