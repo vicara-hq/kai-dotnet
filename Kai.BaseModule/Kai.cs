@@ -14,7 +14,7 @@ namespace Kai.Module
 		/// <summary>
 		/// Contains the capabilities of the Kai
 		/// </summary>
-		public KaiCapabilities Capabilities { get; internal set; }
+		public KaiCapabilities Capabilities { get; internal set; } = 0;
 		
 		/// <summary>
 		/// Mentions the Hand that this Kai is worn in

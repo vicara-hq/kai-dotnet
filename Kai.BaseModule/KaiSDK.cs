@@ -639,9 +639,17 @@ namespace Kai.Module
 		{
 			var kaiID = input[Constants.KaiID].ToObject<int>();
 			var hand = input[Constants.Hand]?.ToObject<string>(); // will not be optional in future
-			var defaultKai = input[Constants.DefaultKai]?.ToObject<bool>();
-			var defaultLeftKai = input[Constants.DefaultLeftKai]?.ToObject<bool>();
-			var defaultRightKai = input[Constants.DefaultRightKai]?.ToObject<bool>();
+			
+			var defaultKai = 
+				input[Constants.DefaultKai]?.ToObject<bool>() ?? 
+				input[Constants.Default]?.ToObject<bool>();
+			var defaultLeftKai = 
+				input[Constants.DefaultLeftKai]?.ToObject<bool>() ??
+				input[Constants.DefaultLeft]?.ToObject<bool>();
+			var defaultRightKai =
+				input[Constants.DefaultRightKai]?.ToObject<bool>() ??
+				input[Constants.DefaultRight]?.ToObject<bool>();
+
 			var kaiSerialNumber = input[Constants.KaiSerialNumber]?.ToObject<bool>(); // will not be optional in future
 
 			//var kaiParsed = KaiObjectParsed.Parse(input);
@@ -671,9 +679,11 @@ namespace Kai.Module
 				KaiID = kaiID,
 				Hand = handEnum
 			};
-			
-			if(defaultKai==true || defaultLeftKai==true || defaultRightKai==true)
+
+			if (defaultKai == true || defaultLeftKai == true || defaultRightKai == true)
+			{
 				ResetDefaultCapabilities();
+			}
 		}
 
 		private static void ResetDefaultCapabilities()
