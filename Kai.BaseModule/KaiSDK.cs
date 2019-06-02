@@ -639,33 +639,36 @@ namespace Kai.Module
 		{
 			var kaiID = input[Constants.KaiID].ToObject<int>();
 			var hand = input[Constants.Hand]?.ToObject<string>(); // will not be optional in future
-			var defaultKai = input[Constants.DefaultKai]?.ToObject<bool>();
-			var defaultLeftKai = input[Constants.DefaultLeftKai]?.ToObject<bool>();
-			var defaultRightKai = input[Constants.DefaultRightKai]?.ToObject<bool>();
 			
-			var defaultK = input[Constants.Default]?.ToObject<bool>();
-			var defaultLeft = input[Constants.DefaultLeft]?.ToObject<bool>();
-			var defaultRight = input[Constants.DefaultRight]?.ToObject<bool>();
-			
+			var defaultKai = 
+				input[Constants.DefaultKai]?.ToObject<bool>() ?? 
+				input[Constants.Default]?.ToObject<bool>();
+			var defaultLeftKai = 
+				input[Constants.DefaultLeftKai]?.ToObject<bool>() ??
+				input[Constants.DefaultLeft]?.ToObject<bool>();
+			var defaultRightKai =
+				input[Constants.DefaultRightKai]?.ToObject<bool>() ??
+				input[Constants.DefaultRight]?.ToObject<bool>();
+
 			var kaiSerialNumber = input[Constants.KaiSerialNumber]?.ToObject<bool>(); // will not be optional in future
 
 			//var kaiParsed = KaiObjectParsed.Parse(input);
 			if (!Enum.TryParse(hand, true, out Hand handEnum))
 				handEnum = Hand.Left;
 			
-			if (defaultKai == true || defaultK  == true)
+			if (defaultKai == true)
 			{
 				DefaultKai.KaiID = kaiID;
 				DefaultKai.Hand = handEnum;
 			}
 
-			if (defaultLeftKai == true || defaultLeft == true)
+			if (defaultLeftKai == true)
 			{
 				DefaultLeftKai.KaiID = kaiID;
 				DefaultLeftKai.Hand = Hand.Left;
 			}
 
-			if (defaultRightKai == true || defaultRight == true)
+			if (defaultRightKai == true)
 			{
 				DefaultRightKai.KaiID = kaiID;
 				DefaultRightKai.Hand = Hand.Right;
@@ -677,8 +680,7 @@ namespace Kai.Module
 				Hand = handEnum
 			};
 
-			if (defaultKai == true || defaultLeftKai == true || defaultRightKai == true
-			    || defaultK == true || defaultLeft == true || defaultRight == true)
+			if (defaultKai == true || defaultLeftKai == true || defaultRightKai == true)
 			{
 				ResetDefaultCapabilities();
 			}
