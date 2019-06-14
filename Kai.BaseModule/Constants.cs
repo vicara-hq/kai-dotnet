@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace Kai.Module
 {
 	public static class Constants
@@ -50,5 +52,6 @@ namespace Kai.Module
 		public const string MagnetometerData = "magnetometerData";
 		public const string Magnetometer = "magnetometer";
 		public const string KaiSerialNumber = "kaiSerialNumber";
+		public const Formatting JsonFormatting = Formatting.None;
 	}
 }
