@@ -15,7 +15,7 @@
     <licenseUrl>https://github.com/vicara-hq/kai-dotnet</licenseUrl>
     <dependencies>
       <dependency id="Newtonsoft.Json" version="12.0.1" />
-      <dependency id="websocket-sharp" version="1.0.4.0" />
+      <dependency id="WebSocketSharpFork" version="1.0.4.0" />
     </dependencies>
   </metadata>
 </package>
