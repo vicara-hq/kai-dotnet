@@ -7,7 +7,7 @@ namespace Kai.Module
 {
 	public static partial class KaiSDK
 	{
-		private static Kai[] connectedKais { get; } = new Kai[8];
+		private static Kai[] ConnectedKais { get; } = new Kai[8];
 		private static bool initialised;
 
 		/// <summary>
@@ -80,7 +80,7 @@ namespace Kai.Module
 		{
 			if (kaiId >= 8)
 				throw new ArgumentOutOfRangeException(nameof(kaiId));
-			return connectedKais[kaiId];
+			return ConnectedKais[kaiId];
 		}
 
 		/// <summary>
@@ -109,7 +109,7 @@ namespace Kai.Module
 				new JObject()
 				{
 					[Constants.Type] = Constants.ListConnectedKais
-				}.ToString(Formatting.None)
+				}.ToString(Constants.JsonFormatting)
 			);
 		}
 		
@@ -173,7 +173,7 @@ namespace Kai.Module
 			if (capabilities.HasFlag(KaiCapabilities.MagnetometerData))
 				json.Add(Constants.MagnetometerData, true);
 			
-			Send(json.ToString(Formatting.None));
+			Send(json.ToString(Constants.JsonFormatting));
 		}
 		
 		/// <summary>
@@ -236,7 +236,7 @@ namespace Kai.Module
 			if (capabilities.HasFlag(KaiCapabilities.MagnetometerData))
 				json.Add(Constants.MagnetometerData, false);
 			
-			Send(json.ToString(Formatting.None));
+			Send(json.ToString(Constants.JsonFormatting));
 		}
 		
 		static partial void SetupConnections();
@@ -256,7 +256,7 @@ namespace Kai.Module
 				[Constants.ModuleSecret] = moduleSecret
 			};
 
-			Send(json.ToString(Formatting.None));
+			Send(json.ToString(Constants.JsonFormatting));
 		}
 
 		private static void Handle(string data)
@@ -319,7 +319,7 @@ namespace Kai.Module
 		{
 			ForegroundProcess = input[Constants.ForegroundProcess].ToObject<string>();
 			var kaiId = input[Constants.KaiID].ToObject<int>();
-			var kai = connectedKais[kaiId];
+			var kai = ConnectedKais[kaiId];
 			var defaultKai = input[Constants.DefaultKai]?.ToObject<bool>();
 			var defaultLeftKai = input[Constants.DefaultLeftKai]?.ToObject<bool>();
 			var defaultRightKai = input[Constants.DefaultRightKai]?.ToObject<bool>();
@@ -674,7 +674,7 @@ namespace Kai.Module
 				DefaultRightKai.Hand = Hand.Right;
 			}
 			
-			connectedKais[kaiID] = new Kai
+			ConnectedKais[kaiID] = new Kai
 			{
 				KaiID = kaiID,
 				Hand = handEnum
