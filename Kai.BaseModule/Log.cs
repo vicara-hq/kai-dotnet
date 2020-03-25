@@ -83,14 +83,14 @@ namespace Kai.Module
         private static void Write(string str)
         {
             if (!ready)
-                throw new ApplicationException("You must call Init() before trying trying to log");
+                throw new ApplicationException("You must call Log.Init() before trying trying to log");
             logStream.Write(str);
         }
 
         private static void WriteLine(string str)
         {
             if (!ready)
-                throw new ApplicationException("You must call Init() before trying trying to log");
+                throw new ApplicationException("You must call Log.Init() before trying trying to log");
             logStream.WriteLine(str);
         }
     }
