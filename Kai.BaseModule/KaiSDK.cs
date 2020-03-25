@@ -70,7 +70,6 @@ namespace Kai.Module
 			ModuleSecret = moduleSecret;
 			
 			initialised = true;
-			Log.Init(Log.Level.Verbose);
 		}
 
 		/// <summary>
