@@ -28,15 +28,10 @@ namespace Kai.Module
         {
             if (ready)
                 return;
-
-            if (moduleStream == null)
+            logStream = new StreamWriter(LogLocation, true)
             {
-                logStream = new StreamWriter(LogLocation, true)
-                {
-                    AutoFlush = true
-                };
-            }
-
+                AutoFlush = true
+            };
             Log.level = level;
 
             Write("--- Kai Logger init. Set triage to ");
@@ -104,13 +99,13 @@ namespace Kai.Module
         private static void Write(string str)
         {
             moduleStream?.Invoke(str);
-            logStream?.Write(str);
+            logStream.Write(str);
         }
 
         private static void WriteLine(string str)
         {
             moduleStream?.Invoke(str);
-            logStream?.WriteLine(str);
+            logStream.WriteLine(str);
         }
     }
 }
